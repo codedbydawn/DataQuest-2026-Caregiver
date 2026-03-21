@@ -5,7 +5,12 @@
       "Bash(python -c \"import pyreadstat; print\\(pyreadstat.__version__\\)\")",
       "Bash(pip install:*)",
       "Read(//c/Users/mikec/**)",
-      "Read(//c/Users/mikec/PROJECTS/**)"
+      "Read(//c/Users/mikec/PROJECTS/**)",
+      "Bash(python -c \"import json; nb=json.load\\(open\\(''c:/Users/mikec/PROJECTS/DataQuest-2026-DAMB/src/eda.ipynb''\\)\\); [print\\(i, c.get\\(''id'',''NO-ID''\\)\\) for i,c in enumerate\\(nb[''cells'']\\)]\")",
+      "Bash(python -c \":*)",
+      "Bash(.venv/Scripts/python.exe -c \"import streamlit; import plotly; print\\(''streamlit'', streamlit.__version__\\); print\\(''plotly'', plotly.__version__\\)\")",
+      "Bash(.venv/Scripts/pip.exe install:*)",
+      "Bash(.venv/Scripts/pip.exe freeze:*)"
     ]
   }
 }

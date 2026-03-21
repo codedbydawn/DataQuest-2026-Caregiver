@@ -1,0 +1,2208 @@
+
+--- PAGE 1 ---
+2018 General Social Survey
+Cycle 32:
+Caregiving and Care Receiving
+Public Use Microdata User Guide
+
+--- PAGE 3 ---
+1
+Table of contents
+1. Introduction ..................................................................................................................................................... 2
+2. Objectives of the General Social Survey .......................................................................................................... 2
+3. Content of the 2018 GSS on Caregiving and Care Receiving ........................................................................... 2
+4. New content and changes to previously existing content .............................................................................. 7
+5. Survey and sample design ............................................................................................................................... 8
+6. Collection and response rate ......................................................................................................................... 11
+7. Processing ...................................................................................................................................................... 12
+8. Estimation ...................................................................................................................................................... 13
+9. Release guidelines and data reliability .......................................................................................................... 19
+10. Additional information ................................................................................................................................ 22
+Appendix A - Tips for using GSS standard bootstrap weights .......................................................................... 23
+Appendix B - Citizenship codes ......................................................................................................................... 26
+Appendix C - Country of birth codes ................................................................................................................. 31
+Appendix D - Religion codes ............................................................................................................................. 39
+Appendix E - Language codes ........................................................................................................................... 48
+
+--- PAGE 4 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+2
+1. Introduction
+This guide was prepared for users of the public use microdata file (PUMF) of the 2018 General Social
+Survey (GSS) -- Caregiving and Care receiving (Cycle 32). This is the seventh time Statistics Canada
+has collected data on the topic of care in one of its surveys. The previous surveys on this topic were
+conducted in 1985 (Cycle 1), 1990 (Cycle 5), 1996 (Cycle 11), 2002 (Cycle 16) 2007 (Cycl e 21), and
+2012 (Cycle 26). The objectives of the guide are to provide context and background information, to
+familiarize users with the content of the survey, and to describe procedures and concepts related to
+collection, estimation, processing and methodology.
+The 2018 GSS on Caregiving and Care Receiving, conducted from April 3rd to December 28th 2018, is
+a sample survey with cross -sectional design. The target population includes all non -institutionalized
+persons 15 years of age and older, living in the 10 provinces of Canada. The survey uses a new frame,
+created in 2013, that combines telephone numbers (landline and cellular) with Statistics Canada's
+Address Register, and collects data both electronically and via telephone. Data are subject to both
+sampling and non-sampling errors.
+The information in the following sections should be used to ensure a clear understanding of the basic
+concepts that define the data provided in the GSS Cycle 32 public use microdata files, the underlying
+methodology of the survey and the key aspects of data quality. This information will provide a better
+understanding of the strengths and limitations of the data, and how they can be effectively used and
+analyzed. The information may be of particular importance when making c omparisons with data from
+other surveys or sources of information, and in drawing conclusions regarding change over time, or
+differences between sub-groups of the target population.
+2. Objectives of the General Social Survey
+The GSS program, established in 1985, conducts telephone surveys across the ten provinces. The GSS
+is recognized for its regular collection of cross -sectional data that allows for trend analysis and its
+capacity to test and develop new concepts that address current or emerging issues.
+The two primary objectives of the General Social Survey are:
+a) To gather data on social trends in order to monitor changes in the living conditions and well -being
+of Canadians over time; and
+b) To provide immediate information on specific social policy issues of current or emerging interest.
+To meet these objectives, the data collected by the GSS comprise two components: core content and
+classification content. Core content - caregiving and care receiving in the case of the 2018 GSS on
+Caregiving and Care Receiving - measures changes in society related to living conditions and well -
+being, and supplies data to inform specific policy issues. Classification variables (such as, age, sex,
+education, income) help delineate population groups for use in the analysis of core data.
+3. Content of the 2018 GSS on Caregiving and Care Receiving
+The General Social Survey on Caregiving and Care Receiving collects information on Canadians who
+receive help or care because of a long-term health condition, a disability or problems related to aging,
+and those who provide help or care to family members or friends with these types of conditions.
+
+--- PAGE 5 ---
+3
+Getting Started: Introduction and respondent selection
+The purpose of this section is to introduce the survey and select a respondent.
+The 2018 GSS on Caregiving and Care Receiving used a new method called age-order selection, to
+select a respondent. The selection algorithm was based on the number of eligible persons living in the
+household and the age order rank of each household member.
+For a portion of the sample, a letter was mailed to the selected household and a household member
+was selected via the letter to complete the electronic questionnaire. The selected respondent was invited
+to complete the questionnaire on the internet by accessing the online questionnaire and typing the
+security access code (SAC) provided in the letter.
+The age-order selection method was also used for the other portion of the sample. The initial contact to
+the household was made by telephone and the selection was done with the interviewer.
+A Roster was used to collect key demographic information on each member of the household, including
+age, sex, and relationships to other household members. In special circumstances--when respondents
+do not speak English or French, or are unable to participate in the survey because of a health condition,
+a physical or mental disability or problems related to aging--proxies are allowed to answer on behalf of
+the selected respondent. Approximately 2% of interviews were completed by proxies.
+Confirmation questions and main activity
+In this short module, selected respondents are asked for their date of birth and confirmation of their age
+(ANCQ) their marital status ( MSNC). In addition, a few short questions ask about the respondents'
+children (NLC) and employment status (LMAM, LPY, REW). These questions direct the flow of questions
+in subsequent sections.
+Care receiving
+Care receiving in general (CAR to NFA)
+This section begins by asking individuals if they had received, during the past 12 months, care or help
+for a long-term health condition, a physical or mental disability or problems related to aging.
+• Those who say "no" go to the last module of this section (module NFA) an d are asked if they
+had needed help and if they had asked for help. These questions measure the unmet needs of
+those Canadians who are not receiving care but would like to.
+• People who indicate that they did receive care continue through this section (PRA to BFP), which
+cover the types of activities they received help with (transportation, cooking, house cleaning,
+etc), the number of hours of help they received, the number of people who helped them, their
+relationships to these people and the age, sex and employment status of their caregivers. These
+modules focus on painting an overall picture of the respondent's care profile. Please note: some
+10.2% of respondents who answered "yes" to CAR_Q110 or CAR_Q115, indicating that they
+have received care during th e past 12 months , then responded "no" to all activity questions in
+ARE (indicating that they did not receive help from family or friends with any specific activity)
+and PAA (indicating that they did not receive help from professionals with any specific activity).
+No further care receiving information over the past 12 months was collected fr om these
+individuals. They are not considered to be care receivers, even though they ini tially identified
+themselves as such.
+
+--- PAGE 6 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+4
+Module PRA asks what the main health condition or problem is for which the respondent received care.
+Following are a set of questions (module ARE) about help received from family, friends or neighbours
+with eight activ ities (transportation; cooking; house cleaning; outdoor work; personal care; medical
+treatments; banking; scheduling activities or anything else).
+Information on the characteristics of people who helped, their relationship to the respondent and the
+number of hours of help they provided are also collected (HAR to RES).
+A parallel set of questions follow, concerning help received from professionals. Combining care received
+from family/friends and professionals provides a complete picture of help received from all sources (PAA
+and DPA).
+Finally, respondents are also asked if they are satisfied with the care they had received, as well as the
+balance of care from professionals and family members/friends (CNR to BFP).
+Care received from Primary Caregiver (PGN to PGH)
+These modules examine who the respondent's primary caregiver is; that is, the person who provides
+the most time and resources to the respondent. In most cases, this person is an immediate family
+member (often a spouse, adult child, or parent) or close friend. Questions probe the primary caregiver's
+relationship to the respondent, their employment status, the year when they started providing care, how
+close they live to the respondent and frequency of contact with each other.
+Types of care received from primary caregiver (AGT to AGX)
+The next set of questions explore the activities with which the primary caregiver helped the respondent,
+the amount of time spent receiving care and the frequency of the care provided. Once again, these
+questions revisit the activities listed in module ARE. However, at this point we only ask the respondent
+more details about the specific activities for which they had indicated having received help as reflected
+in their answers to prior questions in the general module.
+Caregiving
+Caregiving in general (ICG to APX)
+This section looks at life from the caregiver's perspective. Unlike the care receiving section, where
+respondents are asked if they had received care from family/friends or professionals, Section 2 is only
+interested in care provided by the respondent to family, friends or neighbours. A professional or
+volunteer, whose job it is to care for patients or clients, is excluded from this section.
+The first question in this section asks if the respondent had provided, during the past 12 months, help
+or care to family, friends or neighbours because of a long -term health condition, physical or mental
+disability or problems related to aging.
+• If the answer is "no" the respondents skip to module CGH, which looks at care they may have
+provided prior to the past 12 months in order to get a picture of all care given over the lifetime.
+• Those respondents who did provide care during the past 12 months continue through
+subsequent modules (APR-APX), which cover the types of activities they helped with
+(transportation, cooking, house cleaning, etc), the number of hours of help they gave, the number
+of people they helped, their relationships to these people and the age, sex and employment
+status of those they helped. These modules focus on painting an overall picture of the
+respondent's care profile. Please note: 3.5% of respondents who answered "yes" to ICG_Q110
+or ICG_Q115, indicating that they have provided care during the past 12 months, then responded
+
+--- PAGE 7 ---
+5
+"no" to all activity questions in module APR (indicating that they did not provide help to family or
+friends with any specific activity). No further caregiving information over the past 12 months was
+collected from these individuals. They are not considered to be caregivers, even though they
+initially identified themselves as such.
+Primary care receiver (PRN to PRH)
+These questions look at who the respondent's primary care receiver is; that is, the person to whom the
+respondent provides the most time and resources. Most often, the primary care receiver will be an
+immediate family member (often a spouse, child or parent) or close friend. Module PRP asks about the
+main health condition for which this person is receiving care. Questions probe the primary care receiver's
+relationship to the respondent (PRG), their employment sta tus (PRW), the year when they started
+receiving care from the respondent (PRS), how close they live to the respondent (PRD) and the
+frequency of contact with each other (PRH).
+Types of care to the primary care receiver (ART to ARX)
+Modules (ART to ARX) explore the types of help provided by the respondent to the primary care receiver
+along with the amount and frequency of providing this help. Questions only ask about the specific
+activities that the respondents previously indicated providing help with in the APR module.
+Caregiving network and sources of support (CGN to OAC)
+Successful caregiving often hinges on the help and support of others. These modules cover the
+characteristics of individuals who provided additional help to the respondent's primary care receiver as
+well as help received from paid workers and organizations. In addition, respondents are asked if they
+had received support from family, friends, their community or other sources to help them carry out their
+caregiving responsibilities.
+End-of-life care (CGE to CEH)
+This set of questions concerns end-of-life or palliative care that respondents may have provided or may
+still be providing. Many people prefer to be at home, as opposed to a hospital setting, when nearing the
+end of life. Modules CPE and PEH ask what types of conditions may enable respondents to care for
+dying relatives or friends in their own home, should they wish to do so.
+The consequences of caregiving on the caregiver (ICL to ICF2)
+Providing care may be both stressful and rewarding , and how the caregiver manages has significant
+implications for his/her ability to continue providing care. These questions investigate the consequences
+of caregiving on the lives of those who provide this care. Questions ask h ow caregiving affects the
+respondent's family, personal and social life; behaviours associated with healthy living (exercise, eating,
+drinking and smoking); physical health; stress and emotional health. Detailed questions investigate out-
+of-pocket expenses and possible financial hardship suffered as a result of these expenses.
+Note: Individuals who provided 1 hour or less care per week are excluded from modules on
+consequences in order to avoid unnecessary respondent burden.
+The consequences of caregiving on education and employment
+The module ESC1 asks whether the respondent is currently attending an educational institution ; the
+EDM block asks about the type of educational institution the respondent is attending; and EHG3 asks
+the respondent's highest level of schooling. The module ICE asks about the specific consequences of
+caregiving on the caregiver's education, such as postponing enrollment in courses or studies be ing
+affected by the time committed to caregiving.
+
+--- PAGE 8 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+6
+Questions on the respondent's labour market activity in the past week (LMAM) and main activity during
+the past 12 months (LPY) were asked early on in the survey, as they were needed to direct the flow into
+subsequent modules. This section completes the information concerning the respondent's employment.
+Modules NWE to FWA ask about the type of employment the respondent had over the past year (full -
+time, part-time, shift, etc.), the number of hours worked in a typical week and the options to telework
+and to use flexible work arrangements. These questions are asked of everyone, but are particularly
+important for caregivers, whose ability to continue providing care often depends on how accommodating
+their employers are.
+The section concludes with questions about respondents' work-life balance and their level of satisfaction
+with this balance. Modules ITL to ITO examine the consequences of caregiving on the respondent's
+employment during the past 12 months. Specifically, respondents are asked about missing part or full
+days of work; reducing weekly hours of work; loss of employment benefits; giving up a job and losing a
+job. A similar set of questions is asked in modules IPL to IPR focusing on the period prior to the past 12
+months.
+Housing
+The module DOR looks at the type of dwelling of respondents (single, semi-detached, apartment, etc.),
+if the dwelling is owned or rented and how long the person has lived there. The survey also asks about
+people's attachment to their neighbourhood and the favours neighbours are willing to do for each other.
+These questions are meant to gauge a sense of belonging to one's community.
+The AHR module explores accessible housing. These questions cover features such as having a level
+entrance with no stairs, ramps or elevators, doors wide enough to accommodate wheelchairs, easy to
+open doors and lowered counters.
+Health and well-being
+The next modules (SRH to CHC) are asked of all respondents in order to establish their general health
+and well-being. Specific questions look at how people rate their physical and mental health, their eating
+and exercise habits, life satisfaction and the levels of stress they experience on an average day.
+The Disability Screening questions (DSQ) investigate the respondents' functional health with respect to
+their vision, hearing , mobility (ability to get around), flexibility, dexterity (use of hands and fingers),
+learning, development, memory, mental health, and pain. These questions give us a sense of how well
+individuals are able to function in everyday lif e. Answers are used to establish the used frequently by
+researchers to assess functional health.
+Other modules ask about difficulties with sleeping, and the presence of any long-term health conditions.
+A set of questions (FLG) probes respondents' feelings about their connections with other people and
+their sense of connectedness or isolation. These questions constitute the Loneliness Scale, another
+important tool used to assess how well people are coping with life.
+Classification variables
+The next series of questions (BPR to LAN) provide demographic information on respondents, including
+their place of birth immigration status details when applicable, aboriginal identity, visible minority status,
+religion and language.
+The final question on the survey, which was new for GSS32 ask ed respondents if they ever served in
+the Canadian military (VET).
+
+--- PAGE 9 ---
+7
+4. New content and changes to previously existing content
+This section summarizes key changes to the survey content, frame, coding, processing and weights
+and discusses the issue of compa rability of estimates for the 2018 GSS on Caregivers and Care
+Receivers to previous cycles.
+4.1 Summary of keys changes
+The content of GSS Caregiving and Care Receiving has changed over time since its first iteration in
+1985. However, much of the content between cycle 26 (2012) and cycle 32 (2018) remains the same
+allowing for greater comparability between the two cycles. In 2018, questions were added to collect
+additional information on other finances (ICF2) as well, the veteran's identifier (VET) was added.
+The disability screening questions (DSQ) replaced eight modules; VIS (Vision), HRG (Hearing), SPC
+(speech), GTA (mobility), HAF (Dexterity), MEM (Memory) TKG (Cognition), PAD (Pain and Discomfort)
+that were used to establish the Health Utility Index questions (HUI).
+Additional content changes are described in the socio-demographic classification section below.
+1) Socio-demographic classification
+Many survey specific socio-demographic questions were replaced by Statistics Canada's harmonized
+content questions (i.e., standardized modules for household survey variables, such as marital status,
+education, labour force, aboriginal identity, birth place, citizenship, self -rated health and religion).
+Harmonized content modules contain standard concepts, definitions, classification and wording for
+multiple collection modes. This new standardized content is for the most part very similar to the previous
+concepts used by the GSS, but in some cases required adjustments to the traditionally derived variables.
+2) Income
+In 2018, income questions were no longer asked. Income information was obtained instead through a
+linkage to tax data. Respondents were notified of the planned linkage before and during the survey.
+Those who objected to the linking had their objections recorded. For these individuals, no linkage to
+their tax data took place. Linking to tax data diminishes respondent burden and increases data quality
+both in terms of accuracy and in response rates. The 2018 GSS on Caregiving and Care Receiving
+includes personal and family incomes. (See Section 7.3 for more details.)
+3) Frame
+The 2018 GSS on Caregiving and Care Receiving uses the redesigned GSS frame, which integrates
+data from sources of telephone numbers (landline and cellular) available to Statistics Canada and the
+Address Register (AR). This new frame includes "cell phone only" households, a growing population not
+covered by the previous Random Digit Dialling (RDD) frame. The sampling unit is als o different and is
+defined as groups of telephone numbers. (See Section 5.3 for more details.)
+4) Coding
+The North American Industry Classification System (NAICS) 2017 and National Occupational
+Classification (NOC) 2016 were used for industry and occupation coding.
+
+--- PAGE 10 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+8
+5) Processing
+Most of the ongoing data processing steps are standard, including consistency edits and family edits.
+All social surveys have variable names of 8 characters or less and the following reserve codes:
+6 Valid skip
+9 Not stated
+6) Tax data linkage
+Linkage with tax records was successful and fiscal information was available for 87.6% of the 2018 GSS
+on Caregiving and Care Receiving respondents. This rate is calculated among those who did not object
+to the linkage, which corresponds to 97.1% of the respondents.
+7) Weights
+Starting in 2013, the use of a new sampling frame and a new definition of the sampling unit have led to
+a new weighting strategy for the GSS (see Section 8.1). Additionally, the bootstrap weighting strategy
+has been changed from mean bootstrap to standard bootstrap weights (see Appendix A for more
+information on how to use standard bootstrap weights).
+4.2 Comparability of estimates
+The 2018 GSS on Caregivers and Care Receivers offered for the first time an Internet option to survey
+respondents. This new approach to data collection was in recognition of the need to adapt to the
+changing use of technology and the ever present demands o n Canadians' time. By having both
+telephone and Internet modes of data collection, the 2018 GSS on Caregiving and Care Receiving
+offered survey respondents greater flexibility and convenience in providing key and vital information to
+Statistics Canada. It is important to point out that any significant change in survey methodology can
+affect the comparability of the data over time. It is impossible to determine with certainty whether, and
+to what extent, differences in a variable are attributable to an actua l change in the population or to
+changes in the survey methodology. However, there are reasons to believe that the use of an electronic
+questionnaire might have an impact of the estimations. At every stage of processing, verification and
+dissemination, considerable effort was made to produce data that are as precise in their level of detail,
+and to ensure that the published estimates are of good quality in keeping with Statistics Canada
+standards.
+5. Survey and sample design
+Data for 2018 GSS on caregiving and care receiving was collected from April 3rd to December 28th 2018.
+Please see the following sections for descriptions of the target population, stratification, frame, sampling
+strategy, sample size and sample allocation.
+5.1 Target population
+The target population for Cycle 32 of the GSS includes all persons 15 years of age and older in Canada,
+excluding:
+1. Residents of the Yukon, Northwest Territories, and Nunavut;
+2. Full-time residents of institutions.
+
+--- PAGE 11 ---
+9
+5.2 Stratification
+In order to carry out sampling, each of the ten provinces were divided into strata; i.e., geographic areas.
+Many of the Census Metropolitan Areas1 (CMAs) were each considered separate strata. This was the
+case for St. John's, Halifax, Saint John, Montreal, Quebec Cit y, Toronto, Ottawa, Hamilton, Winnipeg,
+Regina, Saskatoon, Calgary, Edmonton and Vancouver.
+All CMAs not on this list are located in Quebec, Ontario and British Columbia, with the exception of
+Moncton. Three more strata were formed by grouping the remaining CMAs (except Moncton) in each of
+Quebec, Ontario and British Columbia. Finally, the non -CMA areas of each of the ten provinces were
+also grouped to form ten more strata, for a total of 27 strata. Moncton was added to the Non -CMA
+stratum for New Brunswick.
+5.3 Frame
+The survey frame was created using two different components:
+• Lists of telephone numbers in use (both landline and cellular) available to Statistics Canada from
+various sources (telephone companies, Census of population, etc.);
+• The Address Register (AR): List of all dwellings within the ten provinces.
+The Address Register (AR) was used to group together all telephone numbers associated with the same
+valid address. About 86% of available telephone numbers were linked to the AR. The records resulting
+from this linkage could possess more than one telephone number (grouped by the address). The other
+14% of telephone numbers not linked to the AR were also included on the frame 2. The combination of
+those two components resulted in the survey frame. The rationale for using all the telephone numbers
+(linked and not linked to the AR) was to ensure a good coverage of all households with telephone
+numbers.
+When more than one telephone number was attached to a record, they were sorted by source and by
+type of telephone number (landline telephone numbers first and cellular telephone numbers last). The
+first telephone number was considered the best telephone number available to reach the household.
+Please note that for the remaining sections of this document, the word "record" will refer to the grouping
+of telephone numbers that consists of our sampling unit on the survey frame.
+5.4 Sampling strategy
+Each record in the survey frame was assigned to a stratum within its province. A simple random sample
+without replacement of records was next selected in each stratum.
+The frame for GSS was created using several linked sources, such as the Census of population,
+administrative data files and billing files. Compared to the previous random digit dialing frame, coverage
+was improved (though over coverage and under coverage may still exist). Households without
+telephones were excluded from the survey population. Survey estimates were adjusted (weighted) to
+represent all persons in the target population, including those not covered by the survey frame.
+1 Based on 2011 Census geography
+2 About 9% of these telephone numbers were grouped using address information from administrative sources. Each of the
+remaining telephone numbers constitutes a single record on the frame.
+
+--- PAGE 12 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+10
+For the 2018 GSS on Caregiving and Care Receiving , 94.2% of the selected telephone numbers
+reached eligible households. To be eligible, a household had to include at least one person 15 years of
+age or older. During collection, households that did not meet the eligibility criteria were terminated after
+an initial set of questions that determined eligibility.
+A respondent was then selected from the age-order method each household to complete an electronic
+questionnaire or to respond to a telephone interview.
+5.5 Rejective Sampling
+As part of the sample design for Cycle 32, due to the potential difficulties in reaching care receivers as
+a result of their low prevalence in the population, an approach called 'rejective sampling' was chosen.
+Rejective sampling works by 'rejecting' a certain portion of the population with a gi ven probability in
+order to allow more time and effort to be spent trying to find the population of interest.
+In the case of Cycle 32, the interviews for a pre-set proportion of respondents that are non -caregivers
+and non-care receivers are terminated after an initial set of questions that establish that they are in fact
+neither caregivers nor care receivers. Although, they are considered respondents, these 'rejected'
+cases, whose interviews are terminated, are removed from the PUMF and not directly used in any
+estimates produced for this cycle. Instead, their information is accounted for in the weighting process
+through the remaining respondents (see Section 8 for more information). Note that the "care population"
+(i.e., caregivers and/or care receivers or needed care ) are identified as those respondents who said
+'Yes' to at least one of the following questions: CAR_Q110, CAR_Q115, NFA_Q10, ICG_Q110,
+ICG_Q115. In other words, respondents who indicated having needed help or care but who have not
+received any are also part of this population.
+This rejective sampling technique is analogous to sub -sampling, except that rather than viewing it as
+sub-sampling a portion of respondents (i.e. those not 'rejected') it is viewed contrarily as 'rejecting' a
+portion of the respondents (i.e. all those not sub -sampled). By rejecting a portion of respondents, it
+allows for more call attempts to be made, possibly increasing the number of care receivers found. It
+should be pointed out that , because caregivers ar e more prevalent in the population , they are much
+easier to find than care receivers.
+The pre-set proportion of non-caregivers and non-care receivers that are rejected (i.e. the rejection rate)
+varies by province and can be as low as 20% and as high as 75%. The rejection rates by province are
+as follows:
+- Newfoundland, Prince Edward Island, Nova Scotia, New Brunswick - 75%
+- Quebec - 30%
+- Ontario - 20%
+- Manitoba, Saskatchewan - 70%
+- Alberta - 60%
+- British Columbia - 40%
+At the time the sample file was created, a flag was included which was randomly set so that it had a "1
+minus rejection rate" chance of being set to one and the same chance as the "rejection rate" of being
+set to zero. So, for instance, for Quebec, all cases would have a 70% (1 -.30) chance of the flag being
+set to a one and a 30% chance of the flag being set to a zero. If a respondent was a non-caregiver and
+a non-care receiver and the randomly set flag on the sample file had been set to one, then the interview
+continued until the end of the ques tionnaire; if the flag had been set to zero, the interview ended after
+the screening questions (listed above). If the respondent was a caregiver and/or a care receiver, the
+flag was ignored.
+
+--- PAGE 13 ---
+11
+5.6 Sample size and allocation
+The target sample size (i.e. the number of respondents excluding 'rejected' respondents) for Cycle 32 was
+20,000, while the final sample size (again excluding 'rejected' respondents) was 20,258. For each province,
+minimum allowable sample sizes were determined that would ensure that certain estimates would have
+an acceptable low sampling variability at the stratum level. Once these stratum sample size targets had
+been met, the remaining sample was allocated to the strata in a way that balanced the need for precision
+of both national-level and stratum-level estimates.
+6. Collection and response rate
+6.1 Collection
+Data for the GSS 32 was collected via a self-reporting respondent electronic questionnaire (rEQ) or an
+interviewer led electronic questionnaire (iEQ). Respondents were interviewed in the official language of
+their choice. Proxy interviews were permitted and approximately 2% of interviews were completed by a
+proxy respondent.
+Telephone interviews were conducted from five of Statistics Canada's regional offices, Halifax,
+Sherbrooke, Sturgeon Falls Winnipeg and Edmonton. Interviewers were trained by Statistics Canada
+staff in telephone interviewing techniques using the electronic questionnaire (iEQ), as well as in survey
+concepts and procedures. The majority of interviewers had experience interviewing for previous GSS
+cycles.
+Interviewers were instructed to make all reasonable attempts to contact the selected member of the
+household, 15 years of age or older . Those who at first refused to participate were re-contacted up to
+two more times to explain the importance of the survey and to encourage their participation. For cases
+in which the timing of the interviewer's call was inconvenient, an appointment was arranged to call back
+at a more convenient time. For cases in which there was no one home, numerous call backs were made.
+Data for Cycle 32 of GSS were collected from April 3rd 2018 to December 28th 2018. The total sample
+was divided into 3 non-overlapping waves of collection, each lasting three months. Collection was
+completed over the three month period and the process for the next wave would start at the beginning
+of the following month.
+6.2 Response rate
+The overall response rate was 52.8%.
+The 2018 sample was selected using the new GSS frame, which necessitated some adjustments in the
+methodology used to calculate the response rates. Addition of "cell phone only" households to the frame
+was essential since this population constitutes a constantly growing portion of the population and
+coverage had been steadily declining with the previous frame. While the addition of these households
+is necessary for coverage of the Canadian population, this population is harder to reach. Another factor
+that affects comparability of the response rate over time is the way in which status (in -scope, out-of-
+scope) is determined under the new design.
+
+--- PAGE 14 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+12
+7. Processing
+Data processing is used to transform survey responses obtained during collection into a form that is
+suitable for tabulation and data analysis. It includes all data handling activities - automated and manual
+- that occur after collection and prior to the dissemination of estimates.
+7.1 Data capture
+Responses to survey questions were entered directly into computers by respondents who self -
+completed the electronic questionnaire (rEQ) and by i nterviewers who completed interviews with
+respondents by telephone (iEQ). Both respondents and interviewers used the same data capture system
+to complete the questionnaire.
+The data capture program allowed a valid range of codes for each question, had built in edits, and
+automatically followed the flow of the questionnaire. The data output was encrypted and transmitted
+electronically to Ottawa.
+7.2 Coding
+Several questions allowed for write-in responses. These responses were coded into existing categories
+(where a match was possible), grouped into new categories or left in "other-specify" (if a match with an
+existing category was not possible or the frequencies were too small to create a new category). Where
+possible (e.g., occupation, industry, language, country of birth, religion), coding followed standard
+classification systems used by the population census and Statistics Canada's harmonized content
+program.
+7.3 Edit and imputation
+Electronic files containing the daily transmissions of completed respondent survey records were
+combined to create the "raw" survey file. Before further processing, verification was performed to identify
+and eliminate potential duplicate records and to drop non-response and out-of-scope records.
+A number of out -of-scope respondents were identified during the data processing and data cleanup
+stages. A small percentage of the sample, identified through specific questions related to age and
+whether or not selected telephone number was personal and belonged to someone in the household
+were determined to be out -of-scope. All records that were determined to be out -of-scope or to be
+nonresponse were removed from the data file.
+Records with missing or incorrect information were, in a small number of cases, corrected
+deterministically from other information on the questionnaire. The flow editing carried out by head office
+followed a 'top down' strategy, in that whether or not a gi ven question was considered 'on path' was
+based on the response codes to the previous questions. If the response codes to the previous questions
+indicated that the current question was 'on path', the responses, if any, to the current question were
+retained, if, however, a response was missing to the current question, it was coded as 'Not Stated', i.e.
+9 (99 or 999, etc.). If the response codes to the previous questions indicated that the current question
+was 'off path' because the respondent was clearly identified as belonging to a sub-population for which
+the current question was inappropriate or not of interest, the current question was coded as 'Valid skip,
+i.e. 6 (96 or 996, etc.).
+
+--- PAGE 15 ---
+13
+In 2018, personal income questions were not asked as part of the survey. Personal income information
+was obtained instead through a linkage to tax data for respondents who did not object to this linkage.
+Income information was obtained from the 2017 T1FF for 85.1% of the respondents. As in the 2017
+GSS, the family income (i.e., linking directly to a variable on the T1FF that corresponds to the census
+family income) was used for the 2018 GSS on Caregiving and Care Receiving. In total, a family income
+value was obtained for 85.1% of households. Missing information for all other respondents was imputed.
+7.4 Creation of combined and derived variables
+A number of variables on the file were derived by combining items on the questionnaire in order to
+facilitate analysis. In some cases, the derived variables were straightforward and involved the collapsing
+of categories. In other cases, two or more variables were combined to create a new variable. The data
+dictionary identifies which variables were derived and the nature of their derivation.
+8. Estimation
+When a probability sample is used, as is the case for GSS, the principle behind estimation is that each
+person selected in the sample represents (in addition to himself or herself) several other persons not in
+the sample. For example, in a simple random sample of 2% of a population size of 1000, each person
+in the sample represents 50 persons in the population. The number of persons represented by a given
+person in the sample is usually known as the weight or weighting factor of the sampled person.
+There are two microdata files from which GSS Cycle 32 estimates can be made: The Analytical File and
+the PUMF (Public Use Microdata File),.
+One weighting factor was placed on the PUMF and is explained below:
+WGHT_PER: This is the basic weighting factor for analysis at the person level, i.e. to calculate estimates
+of the number of persons (non -institutionalized and aged 15 or over) having one or several given
+characteristics. WGHT_PER should be used for all person-level estimates.
+In addition to the estimation weights, bootstrap weights have been created for the purpose of design -
+based variance estimation.
+8.1 Weighting of persons
+As mentioned previously, the records on the survey frame are groups of telepho ne numbers. A simple
+random sample of those records was selected in each stratum. Therefore, each record within a stratum
+has an equal probability of selection.
+This probability is equal to:
+Number of records sampled in the stratum
+Number of records in the stratum from the survey frame
+1) Initial weight calculation
+Certain households in the survey frame had a probability of being reached through more than one
+record. This was possible since groupings of telephone numbers were subject to error.
+As mentioned previously, telephone numbers belonging to the same valid address were grouped
+together on the survey frame. However, for a few cases, the grouping of those telephone numbers might
+
+--- PAGE 16 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+14
+be erroneous (i.e. all the telephone numbers grouped together do not belong to the same household).
+In addition the remaining telephone numbers that could not be linked to addresses were also included
+in the frame. It is possible that some of those telephone numbers could reach households already
+covered by the telephone numbers linked to addresses.
+As a result, a series of questions were added to the survey to establish the prevalence of these
+situations. Several adjustments were made to the initial probability of selection to account for the fact
+that such households had a higher probability of being selected (i.e. they could be contacted through
+more than one group of telephone numbers). Therefore, the initial weight is the inverse of this adjusted
+probability of selection. The resulting initial weight is a household weight.
+2) Removal of out-of-scope records
+Telephone numbers associated with businesses, institutions or other out-of-scope dwellings, as well as
+numbers not in service or any other non -working numbers are all examples of out of -scope telephone
+numbers for this survey. Records with all telephone numbers out-of-scope are simply removed from the
+process, leaving only in -scope records in the sample. These in -scope records keep the same initial
+weight as described in the previous step.
+3) Three-stage non-response adjustment
+Weights for responding telephone numbers were adjusted to represent non -responding telephone
+numbers.
+Non-responding telephone numbers were grouped into three types: those with some auxiliary
+information available (in particular, a complete roster of household members), those with auxiliary
+information from various sources available to Statistics Canada and those with no auxiliary information.
+This non-response adjustment was done in three stages. In the first stage, adjustments were made for
+complete non-response (i.e., households for which no auxiliary information was available). This was
+done independently within each stratum. In the second stage, adjustments were made for non-response
+with auxiliary information from sources available to Statistics Canada. These households had some
+auxiliary information obtained from other sources than the ques tionnaire which was used to model
+propensity to respond. In the third stage, adjustments were made for partial non -response. These
+households had some auxiliary information obtained through the questionnaire which was used to model
+propensity to respond. The last two adjustments were done independently within each wave. The
+combination of these three adjustments is referred to as Factor 1.
+Non-responding telephone numbers were then dropped.
+4) Person weight calculation
+A person weight was calculated for the respondent by multiplying the household weight by the number
+of persons 15 years of age or older in the household.
+This step produces a person weight, which can be calculated as:
+Initial Household Weight x Factor 1 x Number of Eligible Household Members.
+5) Adjustment of person weights for Rejective Sampling
+
+--- PAGE 17 ---
+15
+In order to adjust for the 'rejecting' of a proportion of respondents that are neither caregivers nor care
+receivers nor a person requiring care, the person weight for respondents that are not 'rejected' and are
+neither caregivers nor care receivers nor a person requiring care is multiplied by a factor. This factor is
+equal to:
+Sum of weights for non-caregiving/receiving respondents
+in each stratum-wave-age group
+Sum of weights for non-caregiving/receiving respondents
+not 'rejected' in each stratum-wave-age group
+There are two age categories within each stratum-wave group; less than 45 and 45 and over.
+There is no adjustment to the person weights for caregivers and/or care receivers (i.e. the factor=1).
+'Rejected' responding units are dropped at this step.
+6) Adjustment of person weights to external totals
+The person weights were adjusted several times using a raking ratio procedure. This procedure ensures
+that, based on the survey's total sample, estimates produced that should match certain external
+reference totals do indeed match them. Two sets of external references were used for this survey, both
+of them population totals: for stratum (geographic, and for age-sex groups by province.
+It should be noted that persons living in households without telephone service (or telephone service not
+covered by the frame) are included in the external references even though such persons were not
+sampled.
+6a) Stratum - Wave Adjustment
+An adjustment was made to the person weights on records within each stratum (geographic) per wave
+in order to make population estimates consistent with the corresponding projected population counts.
+This was done by multiplying the person weight for each record within the stratum by the following ratio:
+Projected population count for the stratum-wave
+Sum of the person weights for the stratum-wave
+When sample sizes were small (< 15), data for adjacent waves in the same stratum were combined
+before this adjustment was made.
+6b) Province - age - sex adjustment
+The next weighting step was to adjust the weights to agree with projected province-age-sex population
+distributions. Projected population counts were obtained for males and females within the following
+sixteen age groups:
+15-19 20-24 25-29 30-34
+35-39 40-44 45-49 50-54
+55-59 60-64 65-69 70-74
+75-79 80-84 85-89 90 +
+For each of the resulting classifications the person weights for records within the classification were
+adjusted by multiplying by the following ratio:
+
+--- PAGE 18 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+16
+Projected Province-Age-Sex Group Population Count
+Sum of the Province-Age-Sex Group Person Weights
+When sample sizes were small, adjacent age group data for the same province and sex were combined
+before this adjustment was made.
+6c) Raking ratio adjustments
+The weights of each respondent were adjusted several times using a raking ratio procedure to ensure
+that estimates produced for Stratum -Wave and Province -Age-Sex totals agree with the external
+reference totals. This adjustment was made by repeating steps 6a) and 6b) of the weighting procedures
+until each repetition of the step made a minimal adjustment to the weights.
+7) Final person weight
+The weight produced at the end of step 6) is the final person weight (WGHT_PER) placed on the PUMF.
+8.2 Weighting policy
+Users are cautioned against releasing unweighted tables or performing any analysis based on
+unweighted survey results. As was discussed in Section 8.1, there were several weight adjustments
+performed that depended on the province, care giving/receiving status, stratum, age and sex of the
+respondent. Sampling rates, rejection rates, as well as non -response rates varied significantly from
+province to pr ovince, and non -response rates varied with demographic characteristics. For example,
+non-respondents are often more likely to be males and more likely to be younger. In the responding
+sample, 1.0% of persons were males between the ages of 15 and 19, while in the overall population
+approximately 3.4% were males between 15 and 19. Therefore, it is clear that unweighted sample
+counts cannot be considered to be representative of the survey target population.
+The total number of households in the survey's scope was estimated at 58,176. Among these
+households, 30,689 usable responses were obtained (although only 20,258 responses remain on the
+PUMF due to 'rejected' responding units being dropped), which gives a response rate of 52.8%. The
+distribution of the non-response and response categories is given in the table below:
+Source Number %
+1. Household non-response 23,373 40.2
+2. Non-response (person level) 4,114 7.1
+3. Responses kept 20,258 34.8
+4. Rejected responses 10,431 17.9
+Total Households 58,176 100.0
+In all, there were 27,487 non-response cases (lines 1 and 2), which represented 47.3% of the household
+sample. The non-response includes cases of refusal by the selected person or because of language
+difficulties or other problem for example. Responses obtained from Electronic Questionnaire (EQ)
+represents 48.6% of the 30 689 responses obtained.
+
+--- PAGE 19 ---
+17
+8.3 Types of estimates
+Two types of "simple" estimates are possible from the results of the GSS. These are qualitative
+estimates (estimates of counts or proportions of people possessing certain qualities or characteristics)
+and quantitative estimates involving quantities of averages. More complex estimation and analyses are
+covered in Section 8.5.
+8.3.1 Qualitative estimates
+The target population for the GSS was non-institutionalized persons aged 15 and older, living in the ten
+provinces. Qualitative estimates are estimates of the number or proportion of this target population
+possessing certain characteristics. The number of people ( 6,259,848) who self -report their health as
+excellent (SRH_Q110 = 1) is an example of this kind of estimate. These estimates are readily obtained
+by summing the person weights (WGHT_PER) for the records possessing the characteristic of interest.
+This estimate does not, however, adjust for non-response to the question in any way.
+If we make the assumption that those who didn't responded have the same distribution as those who
+responded, then an adjusted estimate can be made. To do this, the proportion of the target population
+with this characteristic is estimated by excluding respondents with a 'Not Stated' answer to question
+SRH_Q110 and calculating the ratio of the total of the weights of those respondents who reported that
+their health was 'Excellent' (SRH_Q110=1) to that of all respondents who answered the question
+(SRH_Q110=1, 2, 3, 4, or 5). This proportion is then multiplied by the size of the target population to
+produce the final estimate (it should be noted that this adjustment does not have to be done, but it can
+be if needed):
+6,335,219 = 30,755,185 × 6,259,848
+30,389,284
+8.3.2 Quantitative estimates
+Some variables on the Gener al Social Survey PUMF are quantitative in nature (e.g. age, number of
+weeks employed in the past 12 months). From these variables, it is possible to obtain estimates such
+as the average number of weeks employed in the past 12 months. These quantitative estimates are of
+the following ratio form:
+Estimate (average) = X
+Y
+The numerator (X) is a quantitative estimate of the total for the variable of interest (for example, the
+number of weeks employed in the past 12 months) for a given sub-population (for example, males who
+were employed in the past 12 months). In this example, X would be calculated by multiplying the person
+weight (WGHT_PER) by the variable of interest (NWE_Q110) when it is known, 1 <= NWE_Q110 <=
+52, (i.e. not equal to '96'or '99'), and summing this product over all records for males who worked i.e.
+SEX=1 and (1 <= NWE_Q110 <= 52), which yields 485,664,613.
+The denominator (Y) is the qualitative estimate of the number of persons within that sub -population
+(males who was employed in the past 12 months). In this example, Y would be calculated by summing
+the p erson weight (WGHT_PER) over all male respondents with 1 <= NWE_Q110 <= 52, yielding
+10,805,698.
+The two estimates X and Y are derived independently and then divided to provide the quantitative
+estimate. The average number of weeks is then calculated to be:
+
+--- PAGE 20 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+18
+485,664,613
+10,805,734 = 44.9
+8.4 Guidelines for analysis
+As detailed in Section 5 of this document, the GSS respondents do not form a simple random sample
+of the target population. Instead, the survey had a complex design, with stratification and multiple stages
+of selection, and unequal probabilities of selection of respondents. Using data from such complex
+surveys presents analytical challenges because the survey design and the selection probabilities affect
+the estimation and variance calculation procedures that should be used.
+The GSS used a stratified design, with significant differences in sampling fractions between strata. Thus,
+some areas were over-represented in the sample (relative to their populations) while some other areas
+were relatively under -represented; this means that the unweighted sample was not representative of
+the target population, even if there was no non-response. As well, rejection rates varied significantly by
+province and by respondent type (i.e. a res pondent who gave care or received care versus someone
+who didn't do either). This further compounds the fact that the unweighted sample will not be
+representative of the target population. On top of that, non-response rates vary by demographic group,
+making the unweighted sample even less representative.
+The survey weights must be used when producing estimates or performing analyses in order to account
+as much as possible for the over- and under-representation of geographic areas, respondent types, and
+age-sex groups in the unweighted file. While many analysis procedures found in statistical packages
+allow weights to be used, the meaning or definition of the weight in these procedures often differs from
+that which is appropriate in a sample survey framework , with the result that while in many cases the
+estimates produced by the packages are correct, the variances that are calculated are almost
+meaningless.
+For many analysis techniques (for example linear regression, logistic regression, estimation of rates and
+proportions, and analysis of variance), a method exists which can make the variances calculated by the
+standard statistical packages more meaningful. If the weights on the data, or on the subset of the data
+that is of interest, are rescaled so that the average weight is one (1), then the variances produced by
+the standard packages will be more reasonable; they still will not take into account the stratification and
+clustering of the sample's design, but they will take into account the unequal probabilit ies of selection.
+This rescaling can be accomplished by dividing each weight by the overall average weight before the
+analysis is conducted. Section 9 describes sampling variability and data reliability in more detail.
+8.5 Methods of estimation and interpretation of estimates
+As previously mentioned, a basic person weight has been assigned to each sampled individual and, as
+described in Section 8.1, these weights have been adjusted to reflect the age and sex composition of
+the various provincial populations as estimated by Statistics Canada for each month covered by Cycle
+32.
+∑ 𝑊𝐺𝐻𝑇_𝑃𝐸𝑅
+20,258
+𝑖=1
+= 30,755,185
+3
+3 Estimate of the number of persons aged 15 and over in the population
+
+--- PAGE 21 ---
+19
+In general, when an estimate is based on the unit of observation being the person, the WGHT_PER
+should be used. Examples of this are the average number of weeks work ed by persons aged 25 to 29
+years old, the percentage of persons whose main activity in the past 12 months was going to school,
+and the number of people aged between 25 and 44 who are currently attending school, college, CEGEP
+or university.
+9. Release guidelines and data reliability
+It is important for users to become familiar with the contents of this section before publishing or otherwise
+releasing any estimates derived from the General Social Survey PUMF.
+This section of the documentation provides guidelines to be followed by users. With the aid of these
+guidelines, users of the PUMF should be able to produce figures consistent with those produced by
+Statistics Canada and in conformance with the established guidelines for rounding and release. The
+guidelines include four broad sections: Minimum Sample Sizes for Estimates; Sampling Variability
+Policy; Sampling Variability Estimation; and Rounding Policy.
+9.1 Minimum sample size for estimates
+Users should determine the number of records on the PUMF which contribute to the calculation of a
+given estimate. This number should be at least 15 in the case of persons or households. When the
+number of contributors to the weighted estimate is less than 15, the weighted estimate should generally
+not be released regardless of the value of the coefficient of variation. If it is released, it should be with
+great caution and the insufficient number of contributors associated with t he estimate should be
+prominently noted.
+9.2 Sampling variability guidelines
+The estimates derived from this survey are based on a sample of persons. Somewhat different figures
+might have been obtained if a complete census had been taken using the same q uestionnaire,
+interviewers, supervisors, processing methods, etc. as those actually used. The difference between the
+estimates obtained from the sample and the results from a complete count taken under similar conditions
+is called the sampling error of the estimate.
+Errors which are not related to sampling may occur at almost every phase of a survey operation.
+Interviewers may misunderstand instructions, respondents may make errors in answering questions,
+the answers may be incorrectly entered into the EQ system, and errors may be introduced in the
+processing and tabulation of the data. These are all examples of non-sampling errors.
+Over a large number of observations, randomly occurring errors will have little effect on estimates
+derived from the survey. However, errors occurring systematically will contribute to biases in the survey
+estimates. Considerable time and effort was made to reduce non-sampling errors in the survey. Quality
+assurance measures were used at each step of the data collection and processing cycle to monitor the
+quality of the data. These measures included the use of highly skilled interviewers, extensive training of
+interviewers with respect to the survey procedures and questionnaire, observation of interviewers to
+detect problems of questionnaire design or misunderstanding of instructions, and coding and edit quality
+checks to verify the processing logic.
+9.2.1 Non-sampling errors
+A major source of non -sampling errors in surveys is the effect of non -response on the survey results.
+The extent of non-response varies from partial non-response (failure to answer one or a few questions)
+
+--- PAGE 22 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+20
+to total non -response. Total non -response occurred because either the interviewer was unable to
+contact the respondent, no member of the household was able to provide the information (perhaps due
+to a language problem), or the respondent refused to participate in the survey. Total non-response was
+handled by adjusting the weight of households who responded to the survey to compensate for those
+who did not respond.
+In most cases, partial non-response to the survey occurred when the respondent did not understand or
+misinterpreted a question, refused to answer a question, or could not recall the requested information.
+9.2.2 Sampling errors
+Since it is an unavoidable fact that estimates from a sample survey are subject to sampling error, sound
+statistical practice calls for researchers to provide users with some indication of the magnitude of this
+sampling error.
+Although the exact sampling error of the estimate, as defined above, cannot be measured from sample
+results alone, it is possible to estimate a statistical measure of sampling error, the standard error, from
+the sample data. Using the standard error, confidence intervals for estimates (ignoring t he effects of
+non-sampling error) may be obtained under the assumption that the estimates are normally distributed
+about the true population value. The chances are about 68 out of 100 that the difference between a
+sample estimate and the true population va lue would be less than one standard error, about 95 out of
+100 that the difference would be less than two standard errors, and virtually certain that the differences
+would be less than three standard errors.
+Since the absolute size of the sampling error of an estimate is often less important than its relative size
+(relative to the estimate itself) the standard error is not always the best measure of sampling error. For
+example, a standard error of 10 for an estimate of 20 would generally be taken as indicating that the
+estimate is a poor one, while the same standard error for an estimate of 1,000 would generally indicate
+a good estimate. For this reason the size of the sampling error is often expressed relative to the size of
+the estimate, as the coefficient of variation (c.v.). The coefficient of variation of an estimate is obtained
+by dividing the standard error of the estimate by the estimate itself, and the resulting fraction is usually
+expressed as a percentage. In the above example, the first es timate has a c.v. of 50% (10/20), while
+the second has a c.v. of 1% (10/1,000).
+The choice between using the standard error or the CV as a measure of sampling variability is one the
+user should make based on his/her specific analysis. Guidelines for publishing estimates using the CV
+are given in the next section.
+With enough observations, the user can proceed to calculating variances and coefficients of variation
+using the bootstrap weights provided with the data (see Section 9.2.3 for guidelines to follow when using
+coefficients of variation and Appendix A for more details on the appropriate software to use for bootstrap
+weights).
+
+--- PAGE 23 ---
+21
+9.2.3 Guidelines for release of estimates
+When considering releasing and/or publishing an estimate from the PUMF, users sho uld consult the
+table below and follow the guideline that matches the coefficient of variation of the estimate.
+Type of Estimate
+Coefficient of
+Variation
+Policy Statement
+1. With Moderate Sampling Variability 0.0% to 16.5% Estimates can be considered for
+general unrestricted release. No
+special notation is required.
+2. With High Sampling Variability 16.6% to 33.3% Estimates can be considered for
+general unrestricted release but
+should be accompanied by a
+warning cautioning users of the
+high sampling variability
+associated with the estimates.
+3. With Very High Sampling Variability
+33.4% or over Estimates should generally not be
+released, but when they are it
+should be with great caution and
+the very high sampling variability
+associated with the estimate
+should be prominently noted.
+9.3 Variance estimation using bootstrap weights
+In order to determine the quality of the estimate and to calculate the CV, the standard deviation must be
+calculated. Confidence intervals also require the standard deviation of the estimate. The GSS uses a
+multi-stage survey design and calibration, which means that there is no simple formula that can be used
+to calculate variance estimates. Therefore, an approximate method was needed. The bootstrap method
+is used because the sample design and calibration needs to be taken into account when calculating
+variance estimates. With the use of available software to compute variances and the help of bootstrap
+weights, the method is fairly easy for users. For more information on how to use the standard bootstrap
+weight, refer to Appendix A.
+This technique involves dividing the records on the microdata file into subgroups (or replicates) and
+determining the variation in the estimates from replicate to replicate. The replicates are formed by
+selecting, independently within each stratum, a simple random sample with replacement of n-1 of the n
+units in the sample. Note that since the selection is with replacement, a unit may be chosen more than
+once. A bootstrap weight based on the bootstrap sample is calculated for each sample unit in the
+stratum. This process (selecti ng simple random samples, recalculating weights for each stratum) is
+repeated B times, where B is large, yielding B different initial bootstrap weights. The GSS typically uses
+B=500, to produce 500 bootstrap weights.
+These weights are then adjusted according to the same weighting process as the regular person
+weights: non-response adjustment, calibration and so on. The end result is 500 final bootstrap weights
+for each unit in the sample. The variation among the 500 possible estimates based on the 500 bootstrap
+weights is related to the variance of the estimator based on the regular weights and can be used to
+estimate it.
+
+--- PAGE 24 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+22
+9.4 Rounding
+In order for estimates produced from the GSS microdata files to correspond to those produced by
+Statistics Canada, users are urged to adhere to the following guidelines regarding the rounding of such
+estimates. It may be misleading to release unrounded estimates, as they imply greater precision than
+actually exists.
+9.4.1 Rounding guidelines
+1) Estimates of totals in the main body of a statistical table should be rounded to the nearest thousand
+using the normal rounding technique (see definition in Section 9.4.2).
+2) Marginal sub -totals and totals in statistical tables are to be derived from their correspon ding
+unrounded components and then are to be rounded themselves to the nearest thousand units using
+normal rounding.
+3) Averages, proportions, rates and percentages are to be computed from unrounded components and
+then are to be rounded themselves to one decimal using normal rounding.
+4) Sums and differences of aggregates and ratios are to be derived from corresponding unrounded
+components and then rounded to the nearest thousand units or the nearest one decimal using normal
+rounding.
+5) In instances where, due to technical or other limitations, a different rounding technique is used,
+resulting in estimates different from Statistics Canada estimates, users are encouraged to note the
+reason for such differences in the released document.
+9.4.2 Normal rounding
+In normal rounding, if the first or only digit to be dropped is 0 to 4, the last digit to be retained is not
+changed. If the first or only digit to be dropped is 5 to 9, the last digit to be retained is raised by one. For
+example, the number 8499 rounded to thousands would be 8000 and the number 8500 rounded to
+thousands would be 9000.
+10. Additional information
+Data from the survey is available through published reports, special request tabulations, and the
+microdata file. The microdata file will be available from Diversity and Sociocultural Statistics, Statistics
+Canada. Tabulations can be obtained at a cost that will reflect the resources required to produce the
+tabulation.
+To receive a copy of the microdata file or to order special tabulations, please contact:
+Client Services
+Diversity and Sociocultural Statistics
+Statistics Canada
+mailto:statcan.dssclientservices-dssserviceaclientele.statcan@canada.ca
+
+--- PAGE 25 ---
+23
+Appendix A - Tips for using GSS standard bootstrap weights
+A survey weight variable with a cor responding set of 500 standard bootstrap weight 4 variables are
+provided with many GSS microdata files so that a full design-based approach may be taken for doing
+analysis with the data.
+A design -based approach to analysis first involves using the survey weight variable for obtaining
+weighted estimates of the quantities of interest. Then, additional information about the survey design is
+used in order to make estimates of the variances 5 (and covariances) of these estimated quantities. In
+the case of many GSS microdata files, this additional information is in the form of 500 survey bootstrap
+weight variables. The design-based estimates and variance estimates can then be used for making the
+inferences required in the analysis.
+The form of a bootstrap variance estimate can be described briefly as follows:
+Let
+ˆ be the weighted estimate of quantity of interest,
+ , computed using the survey weight
+variable
+w , and let
+)(ˆ b be an estimate obtained in exactly the same manner, except for
+substituting the
+b th bootstrap weight variable
+)(bw for the survey weight variable
+w ,
+b=1,2,…500. This yields the bootstrap estimates
+)500()1( ˆ,....,ˆ  of
+ . Then the usual bootstrap
+estimate of the variance of
+ˆ is
+( )
+2500
+1
+)( ˆˆ
+500
+1)ˆ(ˆ 
+=
+−=
+b
+b
+BV 
+. (1)
+If
+ˆ is a vector instead of a single value, such as if
+ˆ is the set of coefficients of a model, then
+the matrix of estimates of the variances and covariances of the elements of
+ˆ is
+( )( )−−= 
+=
+ ˆˆˆˆ
+500
+1)ˆ(ˆ )(
+500
+1
+)( b
+b
+b
+BV
+. (The value "500" in the formula is due to the fact that we
+have 500 different series of bootstrap weights. If the number of bootstrap samples should
+change from 500, then the values in formula (1) would need to change.)
+Survey bootstrapping is just one replication approach that may be used in order to obtain design-based
+variance estimates with survey data. While several commercial software packages for design -based
+analysis offer replication approaches for variance estimation, they usually do not specify bootstrapping
+as one of these approaches. However, due to the similarity in the form of the variance estimate for the
+bootstrap and for the particular replication method called BRR, programs that can carry out variance
+estimation by this latter approach with user-supplied replication weights can be used to obtain bootstrap
+variance estimates6. In particular, in these software, the 500 bootstrap weights provided in the GSS
+microdata files need to be designated as 500 BRR weights.
+In the sections below, instructions will be given for implementing bootstrap variance estimation with GSS
+microdata, using 3 different commercial software packages that can carry out some design -based
+4 Since 2013, GSS has been using standard bootstrap weights. Special attention should be given to formula (1) as it is
+different from the formula for the mean bootstrap weights.
+5 The variance that is estimated in a design-based approach is the variability in an estimate due to re-sampling by exactly the
+same design from the same finite population.
+6 For a more detailed description see Gagné, Keown and Roberts (2014)
+
+--- PAGE 26 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+24
+analysis for BRR: Stata 9 or 10, SUDAAN and WesVar. In all GSS cycles where bootstrap weights are
+provided, the names given to these bootstrap variables in the user documentation are wtbs_001 to
+wtbs_5007. The name of the survey weight variable is usually wght_per.
+Stata 12
+Beginning with Version 9, the commercial software package Stata added some replication approaches
+for carrying out design-based variance estimation in its survey analysis commands. Moreover, Stata 12
+release included approaches specifically designed to work with Statistics Canada bootstrap weights.
+One replication approach offered is the bootstrap approach, and it is this approach that would be
+specified when analyzing GSS data.
+In order to specify this approach, the following is recommended:
+1. Before using any of the survey analysis commands, use a "svyset" statement to declare the data to
+be survey data, to designate the variables that contain information about the survey design and to
+specify the method for variance estimation. Settings made by "svyset" are saved with a dataset when
+(or if) a dataset is saved. The form of the svyset statement to be used with a GSS analysis dataset
+would have the following form:
+svyset [pweight=wght_per], bsrweight(wtbs_001-wtbs_500) vce(bootstrap) dof(500) mse
+Declaring pweight=wght_per tells Stata that the survey weight (which is often called the probability
+weight) is the variable wght_per.
+The option vce(bootstrap) states that the variance estimation approach to use is bootstrap.
+The option bsrweight (wtbs_001-wtbs_500) states that the names of the bootstrap weight variables
+are wtbs_001, wtbs_002, …, wtbs_500. This option can also be designated as bsrweight (wtbs_*)
+provided there are no variables other than the bootstrap weight variables whose names begin with
+"wtbs_".
+The dof(500) option sets the degrees of freedom to the default. i.e. the number of bootstrap weights.
+The number of primary sampling units containing sample in the population being analyzed minus the
+number of strata containing sample could be a good approximation. However, this information is rarely
+known by researchers. Most of the time, using the number of bootstrap weights will have negligible
+impact on the results.
+Finally, the mse option tells Stata to calculate the variance using squared differences between bootstrap
+estimates and the full -sample estimate of the quantities of interest, as shown in equation (1). If this
+option is not included, Stata uses squared differences between each bootstrap estimate and the mean
+of all the bootstrap estimates. Both approaches should yield approximately the same result.
+2. There is an extensive list of survey analysis commands in Stata, which take a design-based approach
+in their computations. These commands, described in the Stata documentation, are implemented
+through the use of the "svy" prefix along with the names of other estimators. For example, svy: mean
+is the command for estimating population and subpopulation means and estimates of variability taking
+a design-based approach. When the svyset statement precedes all survey commands, the survey
+commands do not have to contain any information about the design-based approach to be taken.
+7 Please note that in previous GSS cycles (Cycle 26 and earlier), the variables wtbs_001 to wtbs_500 were mean bootstrap
+weights. Beginning with cycle 27 of GSS (2013), the variables wtbs_001 to wtbs_500 are standard bootstrap weights.
+
+--- PAGE 27 ---
+25
+It should be noted that, even though most of the commands that allow the "svy" prefix are also the
+names of commands for non-survey data, what is estimated, what options are available and what can
+be done through post-estimation change when the "svy" prefix is added.
+SUDAAN
+SUDAAN is a commercial software package developed by the Research Triangle Institute specifically
+for analysis of data from complex sample surveys and other observational and experimental studies
+involving cluster -correlated data. The SAS -callable version of the software is particularly useful to
+people familiar with SAS.
+Specification of the variance est imation approach to be used by SUDAAN is done in the procedure
+statement for a particular procedure. Additional sample design statements provide further information
+required by the program. In particular, to carry out bootstrapping with GSS data, the fol lowing is
+required:
+- specify DESIGN=BRR in the procedure statement
+- include the following WEIGHT statement to identify the survey weight variable:
+WEIGHT wght_per;
+- include the REPWGT statement to indicate the names of the bootstrap variables on your
+data file. In particular, for GSS microdata files, this REPWGT statement would have the form:
+REPWGT wtbs_001-wtbs_500;
+WesVar
+WesVar is a software package produced by Westat which carries out various analyses of survey data
+using exclusively replication methods for variance estimation. One of the methods offered is BRR.
+Quoting heavily from Phillips (2004), in WesVar, the variance estimation method is specified when
+creating a new WesVar data file. The resulting file is then used to define workbooks where table and
+regression requests are carried out. To define a WesVar data file with bootstrap weights:
+- Move the replicate weight variables (i.e., wtbs-001 to wtbs_500) to the Replicates box..
+- Move the survey weight variable (i.e., wght_per) to the Full sample box.
+- For the mean bootstrap, specify the Method as BRR.
+- Move analysis variables to the Variables box, a unique identifier to the ID box (optional), and
+save the file.
+References
+Gagné, C., Roberts, G. and Keown, L. -A. (2014) " Weighted estimation and bootstrap variance
+estimation for analyzing survey data: How to implement in selected software ". The Research Data
+Centres Information and Technical Bulletin. (Winter) 6(1):5-70. Statistics Canada Catalogue no. 12-002-
+X.
+https://www150.statcan.gc.ca/n1/pub/12-002-x/2014001/article/11901-eng.htm
+
+--- PAGE 28 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+26
+Appendix B - Citizenship codes
+Code Country of Citizenship
+0 Stateless
+4 Afghanistan
+8 Albania
+12 Algeria
+20 Andorra
+24 Angola
+28 Antigua and Barbuda
+31 Azerbaijan
+32 Argentina
+36 Australia
+40 Austria
+44 Bahamas
+48 Bahrain
+50 Bangladesh
+51 Armenia
+52 Barbados
+56 Belgium
+64 Bhutan
+68 Bolivia
+70 Bosnia and Herzegovina
+72 Botswana
+76 Brazil
+84 Belize
+90 Solomon Islands
+96 Brunei Darussalam
+100 Bulgaria
+104 Burma (Myanmar)
+108 Burundi
+112 Belarus
+116 Cambodia
+120 Cameroon
+124 Canada
+132 Cabo Verde
+140 Central African Republic
+144 Sri Lanka
+148 Chad
+152 Chile
+156 China, People's Republic of
+158 Taiwan
+
+--- PAGE 29 ---
+27
+Code Country of Citizenship
+170 Colombia
+174 Comoros
+178 Congo, Republic of the
+180 Congo, Democratic Republic of the
+188 Costa Rica
+191 Croatia
+192 Cuba
+196 Cyprus
+203 Czech Republic
+204 Benin
+208 Denmark
+212 Dominica
+214 Dominican Republic
+218 Ecuador
+222 El Salvador
+226 Equatorial Guinea
+231 Ethiopia
+232 Eritrea
+233 Estonia
+242 Fiji
+246 Finland
+250 France
+262 Djibouti
+266 Gabon
+268 Georgia
+270 Gambia
+275 West Bank and Gaza Strip (Palestine)
+276 Germany
+288 Ghana
+296 Kiribati
+300 Greece
+308 Grenada
+320 Guatemala
+324 Guinea
+328 Guyana
+332 Haiti
+336 Holy See (Vatican City State)
+340 Honduras
+348 Hungary
+352 Iceland
+356 India
+
+--- PAGE 30 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+28
+Code Country of Citizenship
+360 Indonesia
+364 Iran
+368 Iraq
+372 Ireland
+376 Israel
+380 Italy
+384 Côte d'Ivoire
+388 Jamaica
+392 Japan
+398 Kazakhstan
+400 Jordan
+404 Kenya
+408 Korea, North
+410 Korea, South
+414 Kuwait
+417 Kyrgyzstan
+418 Laos
+422 Lebanon
+426 Lesotho
+428 Latvia
+430 Liberia
+434 Libya
+438 Liechtenstein
+440 Lithuania
+442 Luxembourg
+450 Madagascar
+454 Malawi
+458 Malaysia
+462 Maldives
+466 Mali
+470 Malta
+478 Mauritania
+480 Mauritius
+484 Mexico
+492 Monaco
+496 Mongolia
+498 Moldova
+499 Montenegro
+504 Morocco
+508 Mozambique
+512 Oman
+
+--- PAGE 31 ---
+29
+Code Country of Citizenship
+516 Namibia
+520 Nauru
+524 Nepal
+528 Netherlands
+548 Vanuatu
+554 New Zealand
+558 Nicaragua
+562 Niger
+566 Nigeria
+578 Norway
+583 Micronesia, Federated States of
+584 Marshall Islands
+585 Palau
+586 Pakistan
+591 Panama
+598 Papua New Guinea
+600 Paraguay
+604 Peru
+608 Philippines
+616 Poland
+620 Portugal
+624 Guinea-Bissau
+626 Timor-Leste
+634 Qatar
+642 Romania
+643 Russian Federation
+646 Rwanda
+659 Saint Kitts and Nevis
+662 Saint Lucia
+670 Saint Vincent and the Grenadines
+674 San Marino
+678 Sao Tome and Principe
+682 Saudi Arabia
+686 Senegal
+688 Serbia
+690 Seychelles
+694 Sierra Leone
+702 Singapore
+703 Slovakia
+704 Viet Nam
+705 Slovenia
+
+--- PAGE 32 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+30
+Code Country of Citizenship
+706 Somalia
+710 South Africa, Republic of
+716 Zimbabwe
+724 Spain
+728 South Sudan
+736 Sudan
+740 Suriname
+748 Swaziland
+752 Sweden
+756 Switzerland
+760 Syria
+762 Tajikistan
+764 Thailand
+768 Togo
+776 Tonga
+780 Trinidad and Tobago
+784 United Arab Emirates
+788 Tunisia
+792 Turkey
+795 Turkmenistan
+798 Tuvalu
+800 Uganda
+804 Ukraine
+807 Macedonia, Republic of
+818 Egypt
+826 United Kingdom - British citizen
+834 Tanzania
+840 United States
+854 Burkina Faso
+858 Uruguay
+860 Uzbekistan
+862 Venezuela
+882 Samoa
+887 Yemen
+894 Zambia
+926 United Kingdom - dependencies and other
+983 Kosovo
+
+--- PAGE 33 ---
+31
+Appendix C - Country of birth codes
+Code Country of birth
+11124 Canada
+11304 Greenland
+11666 Saint Pierre and Miquelon
+11840 United States
+12084 Belize
+12188 Costa Rica
+12222 El Salvador
+12320 Guatemala
+12340 Honduras
+12484 Mexico
+12558 Nicaragua
+12591 Panama
+13028 Antigua and Barbuda
+13044 Bahamas
+13052 Barbados
+13060 Bermuda
+13092 Virgin Islands, British
+13136 Cayman Islands
+13192 Cuba
+13212 Dominica
+13214 Dominican Republic
+13308 Grenada
+13312 Guadeloupe
+13332 Haiti
+13388 Jamaica
+13474 Martinique
+13500 Montserrat
+13531 Curaçao
+13533 Aruba
+13534 Sint Maarten (Dutch part)
+13535 Bonaire, Sint Eustatius and Saba
+13630 Puerto Rico
+13652 Saint Barthélemy
+13659 Saint Kitts and Nevis
+13660 Anguilla
+13662 Saint Lucia
+13663 Saint Martin (French part)
+13670 Saint Vincent and the Grenadines
+13780 Trinidad and Tobago
+
+--- PAGE 34 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+32
+Code Country of birth
+13796 Turks and Caicos Islands
+13850 Virgin Islands, United States
+14032 Argentina
+14068 Bolivia
+14076 Brazil
+14152 Chile
+14170 Colombia
+14218 Ecuador
+14238 Falkland Islands (Malvinas)
+14239 South Georgia and the South Sandwich
+Islands
+14254 French Guiana
+14328 Guyana
+14600 Paraguay
+14604 Peru
+14740 Suriname
+14858 Uruguay
+14862 Venezuela
+21040 Austria
+21056 Belgium
+21250 France
+21276 Germany
+21438 Liechtenstein
+21442 Luxembourg
+21492 Monaco
+21528 Netherlands
+21756 Switzerland
+22100 Bulgaria
+22112 Belarus
+22203 Czechia
+22233 Estonia
+22348 Hungary
+22428 Latvia
+22440 Lithuania
+22498 Moldova
+22616 Poland
+22642 Romania
+22643 Russian Federation
+22703 Slovakia
+22804 Ukraine
+23208 Denmark
+23234 Faroe Islands
+
+--- PAGE 35 ---
+33
+Code Country of birth
+23246 Finland
+23248 Åland Islands
+23352 Iceland
+23372 Ireland
+23578 Norway
+23680 Sark
+23744 Svalbard and Jan Mayen
+23752 Sweden
+23826 United Kingdom
+23831 Guernsey
+23832 Jersey
+23833 Isle of Man
+24008 Albania
+24020 Andorra
+24070 Bosnia and Herzegovina
+24191 Croatia
+24292 Gibraltar
+24300 Greece
+24336 Holy See (Vatican City State)
+24380 Italy
+24470 Malta
+24499 Montenegro
+24620 Portugal
+24674 San Marino
+24688 Serbia
+24705 Slovenia
+24724 Spain
+24807 Macedonia, Republic of
+24983 Kosovo
+31132 Cabo Verde
+31204 Benin
+31270 Gambia
+31288 Ghana
+31324 Guinea
+31384 Côte d'Ivoire
+31430 Liberia
+31466 Mali
+31478 Mauritania
+31562 Niger
+31566 Nigeria
+31624 Guinea-Bissau
+
+--- PAGE 36 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+34
+Code Country of birth
+31654 Saint Helena
+31686 Senegal
+31694 Sierra Leone
+31768 Togo
+31854 Burkina Faso
+32108 Burundi
+32174 Comoros
+32175 Mayotte
+32231 Ethiopia
+32232 Eritrea
+32262 Djibouti
+32404 Kenya
+32450 Madagascar
+32454 Malawi
+32480 Mauritius
+32508 Mozambique
+32638 Réunion
+32646 Rwanda
+32690 Seychelles
+32706 Somalia
+32716 Zimbabwe
+32728 South Sudan
+32800 Uganda
+32834 Tanzania
+32894 Zambia
+33012 Algeria
+33434 Libya
+33504 Morocco
+33729 Sudan
+33732 Western Sahara
+33788 Tunisia
+33818 Egypt
+34024 Angola
+34120 Cameroon
+34140 Central African Republic
+34148 Chad
+34178 Congo, Republic of the
+34180 Congo, Democratic Republic of the
+34226 Equatorial Guinea
+34266 Gabon
+34678 Sao Tome and Principe
+
+--- PAGE 37 ---
+35
+Code Country of birth
+35072 Botswana
+35426 Lesotho
+35516 Namibia
+35710 South Africa, Republic of
+35748 Swaziland
+41004 Afghanistan
+41031 Azerbaijan
+41048 Bahrain
+41051 Armenia
+41196 Cyprus
+41268 Georgia
+41275 West Bank and Gaza Strip (Palestine)
+41364 Iran
+41368 Iraq
+41376 Israel
+41398 Kazakhstan
+41400 Jordan
+41414 Kuwait
+41417 Kyrgyzstan
+41422 Lebanon
+41512 Oman
+41634 Qatar
+41682 Saudi Arabia
+41760 Syria
+41762 Tajikistan
+41784 United Arab Emirates
+41792 Turkey
+41795 Turkmenistan
+41860 Uzbekistan
+41887 Yemen
+42156 China
+42158 Taiwan
+42344 Hong Kong
+42392 Japan
+42408 Korea, North
+42410 Korea, South
+42446 Macao
+42496 Mongolia
+43096 Brunei Darussalam
+43104 Burma (Myanmar)
+43116 Cambodia
+
+--- PAGE 38 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+36
+Code Country of birth
+43360 Indonesia
+43418 Laos
+43458 Malaysia
+43608 Philippines
+43626 Timor-Leste
+43702 Singapore
+43704 Viet Nam
+43764 Thailand
+44050 Bangladesh
+44064 Bhutan
+44086 British Indian Ocean Territory
+44144 Sri Lanka
+44356 India
+44462 Maldives
+44524 Nepal
+44586 Pakistan
+51016 American Samoa
+51036 Australia
+51090 Solomon Islands
+51162 Christmas Island
+51166 Cocos (Keeling) Islands
+51184 Cook Islands
+51242 Fiji
+51258 French Polynesia
+51296 Kiribati
+51316 Guam
+51520 Nauru
+51540 New Caledonia
+51548 Vanuatu
+51554 New Zealand
+51570 Niue
+51574 Norfolk Island
+51580 Northern Mariana Islands
+51581 United States Minor Outlying Islands
+51583 Micronesia, Federated States of
+51584 Marshall Islands
+51585 Palau
+51598 Papua New Guinea
+51612 Pitcairn
+51772 Tokelau
+51776 Tonga
+
+--- PAGE 39 ---
+37
+Code Country of birth
+51798 Tuvalu
+51876 Wallis and Futuna
+51882 Samoa
+61010 Antarctica
+61074 Bouvet Island
+61260 French Southern Territories
+61334 Heard Island and McDonald Islands
+10000 Americas
+10000 Amériques
+11000 North America
+11000 Amérique du Nord
+12000 Central America
+12000 Amérique centrale
+13000 Caribbean and Bermuda
+13000 Antilles et Bermudes
+14000 South America
+14000 Amérique du Sud
+20000 Europe
+20000 Europe
+21000 Western Europe
+21000 Europe de l'Ouest
+22000 Eastern Europe
+22000 Europe de l'Est
+23000 Northern Europe
+23000 Europe du Nord
+24000 Southern Europe
+24000 Europe du Sud
+30000 Africa
+30000 Afrique
+31000 Western Africa
+31000 Afrique de l'Ouest
+32000 Eastern Africa
+32000 Afrique de l'Est
+33000 Northern Africa
+33000 Afrique du Nord
+34000 Central Africa
+34000 Afrique centrale
+35000 Southern Africa
+35000 Afrique du Sud
+40000 Asia
+40000 Asie
+
+--- PAGE 40 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+38
+Code Country of birth
+41000 West Central Asia and the Middle East
+41000 Asie de l'Ouest et centrale et Moyen-Orient
+42000 Eastern Asia
+42000 Asie de l'Est
+43000 Southeast Asia
+43000 Asie du Sud-Est
+44000 Southern Asia
+44000 Asie du Sud
+50000 Oceania
+50000 Océanie
+60000 Antarctica and Adjacent Islands
+60000 Antarctique et îles adjacentes
+80000 Born at sea
+80000 Né(e) en mer
+90000 Uncodable
+90000 Non codable
+
+--- PAGE 41 ---
+39
+Appendix D - Religion codes
+RELIGION TEXT RELCODE
+ABORIGINAL SPIRITUALITY 201000
+ADVENTISTE DU SEPTIÈME JOUR 102010
+ADVENTIST - SEVENTH-DAY 102010
+SEVENTH-DAY ADVENTIST 102010
+AGNOSTIC 301000
+AHMADIYYA 105050
+AMISH 102270
+ANIMIST 201100
+ANCESTOR WORSHIP 201100
+ANGLICAN 102020
+ANGLO-CATHOLIC 102020
+ANTIOCHIAN ORTHODOX CHRISTIAN 103010
+APOSTOLIC CHRISTIAN CHURCH 102030
+ARMENIAN APOSTOLIC 103020
+ARMENIAN CATHOLIC 101010
+ARMENIAN ORTHODOX 103020
+ASSOCIATED GOSPEL 102040
+ATHEIST 302000
+BAHA'I 105010
+BAPTIST 102050
+BLACKFOOT 201000
+BRETHREN IN CHRIST 102060
+BUDDHIST 105020
+BULGARIAN ORTHODOX 103050
+CANADIAN AND AMERICAN REFORMED
+CHURCHES
+102070
+CANADIAN AND AMERICAN REFORMED
+CHURCH
+102070
+CHALDEAN CATHOLIC 101010
+CHARISMATIC RENEWAL 102080
+CHRISTADELPHIAN 102090
+CHRISTIAN AND MISSIONARY ALLIANCE 102100
+CHRISTIAN CONGREGATION 102120
+CHRISTIAN OR PLYMOUTH BRETHREN 102420
+CHRISTIAN ORTHODOX 103050
+CHRISTIAN REFORMED CHURCH 102140
+CHURCH OF JESUS CHRIST OF LATTER-DAY
+SAINTS
+102160
+CHURCH OF SCOTLAND/SCOTTISH
+PRESBYTERIAN
+102430
+
+--- PAGE 42 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+40
+RELIGION TEXT RELCODE
+CHURCH OF THE NAZARENE 102170
+THE CHRISTIAN CHURCH (DISCIPLES OF
+CHRIST)
+102180
+CHURCHES OF CHRIST DISCIPLES 102180
+COPTIC ORTHODOX 103030
+CREE 201000
+COVENANT CHURCH 102430
+DÉNÉ 201000
+DOUKHOBOR 102037
+DOUKHOBORS 102037
+DRUID 206000
+DRUZE 105050
+DUTCH REFORMED CHURCH 102190
+EASTERN RITE CATHOLIC 101010
+ECKANKAR 105000
+ETHIOPIAN ORTHODOX 103050
+EVANGELICAL BAPTIST 102050
+EVANGELICAL FREE CHURCH 102210
+EVANGELICAL COVENANT CHURCH 102380
+EVANGELICAL MISSIONARY CHURCH 102210
+FOUR SQUARE GOSPEL CHURCH 102400
+FOURTH WAY 209000
+FREE METHODIST 102220
+FREE REFORMED CHURCH 102070
+FULL GOSPEL 102400
+GERMAN LUTHERAN 102260
+GLAD TIDINGS 102400
+GNOSTIC 210000
+GOSPEL HALL 102400
+GRACE COMMUNION INTERNATIONAL 102550
+GREEK ORTHODOX 103040
+HINDU 105040
+HUMANIST 304000
+HUTTERITE 102230
+IGLESIA NI CRISTO 102380
+INTERDENOMINATIONAL CHRISTIAN 102240
+INTERDENOMINATIONAL 102240
+ISMALI 105050
+JAINS 105060
+JAINISM 105060
+TÉMOIN DE JÉHOVAH 102250
+
+--- PAGE 43 ---
+41
+RELIGION TEXT RELCODE
+JEHOVAH'S WITNESSES 102250
+JEHOVAH'S WITNESS 102250
+JEWISH 104000
+JEWISH ORTHODOX 104000
+LAESTASDIAN LUTHERAN 102260
+MORMON 102480
+LATTER-DAY SAINTS (MORMONS) 102480
+LONGHOUSE 201000
+MACEDONIAN ORTHODOX 103050
+MANITOU 201000
+MAR THOMA SYRIAN CHURCH/MARTHOMITE 102380
+MARONITE 101010
+MELKITE 101010
+MENNONITE 102270
+MENNONITE BRETHEN 102270
+MESSIANIC JEW/JEWISH CHRISTIAN 102380
+METROPOLITAN COMMUNITY CHURCH 102380
+MIDEWIN 201000
+MISSION DE L'ESPRIT SAINT 102310
+MORAVIAN CHURCH 102330
+MORAVIAN 102330
+NATIVE AMERICAN CHURCH 102380
+NEW AGE 204000
+NEW APOSTOLIC 102340
+NO RELIGION 305000
+NON-DENOMINATIONAL CHRISTIAN 102360
+NON-DENOMINATIONAL 102360
+PAGAN 206000
+PENTECOSTAL 102400
+POLISH NATIONAL CATHOLIC CHURCH 101020
+PRESBYTERIAN 102430
+QUAKER 102450
+QUAKERS 102450
+MOUVEMENT RASTAFARI 207000
+RASTAFARIAN 207000
+REFORMED PRESBYTERIAN 102430
+REINLANDER MENNONITE 102270
+REORGANIZED CHURCH OF LATTER-DAY
+SAINTS
+102480
+REVIVAL CENTRE 102380
+ROMAN CATHOLIC 101030
+
+--- PAGE 44 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+42
+RELIGION TEXT RELCODE
+CATHOLIC 101030
+CATHOLIQUE 101030
+ROMANIAN ORTHODOX 103060
+RUSSIAN ORTHODOX 103070
+SALVATION ARMY 102490
+SATANIST 208000
+SCIENCE OF MIND/RELIGIOUS SCIENCE 201100
+SCIENTOLOGY 209000
+SERBIAN ORTHODOX 103080
+SHAKER 102380
+SHAMANISM 206000
+SHI'A 105050
+SHINTO 105080
+SIKH 105090
+SOMMERFELD MENNONITE 102270
+SOUTHERN BAPTIST 102050
+SPIRITUAL BAPTIST 102050
+SPIRITUALIST 102500
+STANDARD CHURCH 102510
+SUNNI 105050
+SWEDENBORGIAN (NEW CHURCH) 102350
+SYRIAN CATHOLIC 101010
+TAOIST 105100
+UKRAINIAN CATHOLIC 101040
+UKRAINIAN ORTHODOX 103090
+UNITARIAN 102520
+UNITED CHURCH 102530
+UNITY - NEW THOUGHT - PANTHEIST 102510
+VINEYARD CHRISTIAN FELLOWSHIP 102380
+WESLEYAN 102540
+WICCA 206000
+WORLDWIDE CHURCH OF GOD 102550
+ZOROASTRIAN 105070
+ANABAPTIST 102270
+ANABAPTISTE 102270
+ANABAPITIST 102270
+APOSTOLIC 102380
+BORN-AGAIN CHRISTIAN 102130
+CHRÉTIENNE RÉGÉNÉRÉE 102130
+CHURCH OF GOD 102150
+EVANGELICAL 102380
+
+--- PAGE 45 ---
+43
+RELIGION TEXT RELCODE
+FREE CHURCH 102430
+FUNDAMENTALIST 102380
+GOSPEL 102400
+GREEK OR BYZANTINE CATHOLIC 101010
+EASTERN CATHOLIC 101010
+EASTERN RELIGIONS 105000
+LUTHERAN 102260
+METHODIST 102280
+MUSLIM 105050
+REFORMED 102430
+ORTHODOX 103000
+PROTESTANT 102000
+CHRISTIAN 102130
+OTHER LANGUAGE - SPECIFY 900000
+OTHER - SPECIFY 900000
+SPIRITUALITÉ AUTOCHTONE 201000
+ADVENTISTE 102010
+AGNOSTIQUE 301000
+AHMADIYYA 105050
+AMISH 102270
+ANIMIST 201100
+CULTE D'ANCÊTRE 201100
+ANGLICANE 102020
+ANGLO-CATHOLIQUE 102020
+CHRÉTIEN ORTHODOXE ANTIOCHIEN 103010
+CHRÉTIENNE APOSTOLIQUE 102030
+ARMÉNIENNE APOSTOLIQUE 103020
+CATHOLIQUE ARMÉNIENNE 101010
+ORTHODOXE ARMÉNIENNE 103020
+ÉVANGILE DE L'UNION 102040
+ATHÉE 302000
+BAHA'I 105010
+BAPTISTE 102050
+PIEDS-NOIRS 201000
+FRÈRES DANS LE CHRIST 102060
+BOUDDHISTE 105020
+ORTHODOXE BULGARE 103050
+ÉGLISE RÉFORMÉE DU CANADA ET
+D'AMÉRIQUE
+102070
+CATHOLIQUE CHALDÉENNE 101010
+RENOUVEAU CHARISMATIQUE 102080
+
+--- PAGE 46 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+44
+RELIGION TEXT RELCODE
+CHRISTADELPHE 102090
+ALLIANCE CHRÉTIENNE ET MISSIONNAIRE 102100
+CONGRÉGATION CHRÉTIENNE 102120
+FRÈRES DE PLYMOUTH 102420
+ORTHODOXE CHRÉTIENNE 103050
+ÉGLISE CHRÉTIENNE RÉFORMÉE 102140
+ÉGLISE DES SAINTS DES DERNIERS JOURS 102160
+ÉGLISE DE L'ECOSSE/PRESBYTÉTIEN
+ÉCOSSOIS
+102430
+ÉGLISE DU NAZARÉEN 102170
+ÉGLISE DES DISCIPLES DU CHRIST 102180
+ORTHODOXE COPTE 103030
+CRI 201000
+ÉGLISE COVENANT 102430
+DÉNÉ 201000
+DOUKHOBORS 102037
+DRUIDE 206000
+DRUZES 105050
+ÉGLISE RÉFORMÉE HOLLANDAISE 102190
+CATHOLIQUE RITE ORIENTAL 101010
+ECKANKAR 105000
+OTHER ORTHODOX 103050
+ORTHODOXE ÉTHIOPIENNE 103050
+BAPTISTE ÉVANGÉLIQUE 102050
+ÉGLISE ÉVANGÉLIQUE LIBRE 102210
+ÉGLISE COVENANT ÉVANGÉLIQUE 102380
+ÉGLISE MISSIONNAIRE ÉVANGÉLIQUE 102210
+ÉGLISE ÉVANGILE, FOUR SQUARE 102400
+FOURTH WAY 209000
+MÉTHODISTE LIBRE 102220
+ÉGLISE LIBRE RÉFORMÉE 102070
+FULL GOSPEL 102400
+LUTHÉRIENNE ALLEMAND 102260
+GLAD TIDINGS 102400
+GNOSTIQUE 210000
+SALLE D'ÉVANGILE 102400
+COMMUNION DE GRACE INTERNATIONALE 102550
+ORTHODOXE GRECQUE 103040
+HINDOUE 105040
+HUMANISTE 304000
+HUTTÉRITE 102230
+
+--- PAGE 47 ---
+45
+RELIGION TEXT RELCODE
+IGLESIA NI CRISTO 102380
+CHRÉTIEN INTERSECTAIRE 102240
+INTERSECTAIRE 102240
+ISMAÉLIENNE 105050
+DJAÏN 105060
+TÉMOINS DE JÉHOVAH 102250
+JUIVE 104000
+ORTHODOXE JUIVE 104000
+LUTHÉRIENNE LAESTADIAN 102260
+SAINTS DES DERNIERS JOURS (MORMONE) 102480
+LONGUE MAISON 201000
+ORTHODOXE MACÉDONIENNE 103050
+MANITOU 201000
+ÉGLISE SYRIENNE MAR THOMA/MARTHOMITE 102380
+MARONITE 101010
+MELKITE 101010
+MENNONITE 102270
+FRÈRES DANS LE MENNONITE 102270
+JUIF DE MESSIE/CHRÉTIEN JUIF 102380
+ÉGLISE METROPOLITAINE DE LA
+COMMUNAUTÉ
+102380
+MIDEWIN 201000
+MISSION DE L'ESPRIT SAINT 102310
+MORAVE 102330
+ÉGLISE AUTOCHTONE 102380
+NOUVEL ÂGE 204000
+APOSTOLIQUE NOUVELLE 102340
+AUCUNE RELIGION 305000
+NON SECTAIRE 102360
+PAÏENNE 206000
+PENTECÔTISTE 102400
+ÉGLISE CATHOLIQUE NATIONALE POLONAISE 101020
+PRESBYTÉRIENNE 102430
+QUAKERS 102450
+RASTAFARISME 207000
+PRESBYTÉRIENNE RÉFORMÉE 102430
+MENNONITE REINLANDER 102270
+ÉGLISE RÉORGANISÉE DES SAINTS DES
+DERNIERS JOURS
+102480
+CENTRE DE RENAISSANCE 102380
+CATHOLIQUE ROMAINE 101030
+ORTHODOXE ROUMAINE 103060
+
+--- PAGE 48 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+46
+RELIGION TEXT RELCODE
+ORTHODOXE RUSSE 103070
+ARMÉE DU SALUT 102490
+SATANISM 208000
+SATANISME 208000
+LA SCIENCE DE L'ESPRIT/LA SCIENCE
+RELIGIEUSE
+201100
+LA SCIENCE DE L'ESPRIT/LA SCIENCE
+RELIGIEUSE
+201100
+SCIENTOLOGIE 209000
+ORTHODOXE SERBE 103080
+SHAKER 102380
+CHAMANISME 206000
+CHIITE 105050
+SHINTOÏSTE 105080
+SIKH 105090
+MENNONITE SOMMERFELD 102270
+BAPTISTE MÉRIDIONAL 102050
+BAPTISTE SPIRTUEL 102050
+SPIRITUALISTE 102500
+STANDARD CHURCH 102510
+SUNNITE 105050
+SWEDENBORGIAN (ÉGLISE NOUVELLE) 102350
+CATHOLIQUE SYRIENNE 101010
+TAÔISTE 105100
+CATHOLIQUE UKRAINIENNE 101040
+ORTHODOXE UKRAINIENNE 103090
+UNITARIENNE 102520
+ÉGLISE UNIE 102530
+UNITÉ - NOUVELLE PENSÉE - PANTHÉISTE 102510
+VINEYARD CHRISTIAN FELLOWSHIP 102380
+WESLEYENNE 102540
+WICCA 206000
+WORLDWIDE CHURCH OF GOD 102550
+ZOROASTRIENNE 105070
+ANABAPITISTE 102270
+APOSTOLIQUE 102380
+CHRÉTIENNE, RÉGÉNÉRÉE 102130
+ÉGLISE DE DIEU 102150
+ÉVANGÉLIQUE 102380
+ÉGLISE LIBRE 102430
+ÉXTREMINSTE 102380
+ÉVANGILE 102400
+
+--- PAGE 49 ---
+47
+RELIGION TEXT RELCODE
+CATHOLIQUE GRECQUE OU BYZANTINE 101010
+CATHOLIQUE ORIENTALE 101010
+RELIGION ORIENTALES 105000
+LUTHÉRIENNE 102260
+MÉTHODISTE 102280
+MUSULMANE 105050
+RÉFORMÉE 102430
+ORTHODOXE 103000
+PROTESTANTE 102000
+CHRÉTIENNE 102130
+AUTRE LANGUE - PRÉCISEZ 900000
+AUTRE - PRÉCISEZ 900000
+JEDI 900000
+FREE THINKER 900000
+AUTRE CATHOLIQUE 101010
+OTHER CATHOLIC 101010
+
+--- PAGE 50 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+48
+Appendix E - Language codes
+LANGUAGE TEXT LANGCODE
+English 21010000
+French 21020000
+Aboriginal languages 22010000
+Algonquian languages 22010100
+Algonquin 22010101
+Atikamekw 22010102
+Blackfoot 22010103
+Cree 22010104
+Malecite 22010105
+Mi'kmaq 22010106
+Montagnais-naskapi 22010107
+Ojibway 22010108
+Oji-cree 22010109
+Athapaskan languages 22010200
+Carrier 22010201
+Chilcotin 22010202
+Chipewyan 22010203
+Dene 22010204
+Dogrib 22010205
+Kutchin-gwich'in (loucheux) 22010206
+North slave (hare) 22010207
+South slave 22010208
+Haida 22010300
+Iroquoian languages 22010400
+Mohawk 22010401
+Kutenai 22010500
+Salish languages 22010600
+Shuswap 22010601
+Thompson (ntlakapamux) 22010602
+Siouan languages
+(dakota/sioux)
+22010700
+Tlingit 22010800
+Tsimshian languages 22010900
+Gitksan 22010901
+Nisga'a 22010902
+Tsimshian 22010903
+Wakashan languages 22011000
+Nootka 22011001
+Inuktitut 22011100
+Inuinnaqtun 22011101
+
+--- PAGE 51 ---
+49
+LANGUAGE TEXT LANGCODE
+Romance languages 22020000
+Italian 22020100
+Portuguese 22020200
+Romanian 22020300
+Spanish 22020400
+Germanic languages 22030000
+Dutch 22030100
+Flemish 22030200
+Frisian 22030300
+German 22030400
+Yiddish 22030500
+Scandinavian languages 22030600
+Danish 22030601
+Icelandic 22030602
+Norwegian 22030603
+Swedish 22030604
+Celtic languages 22040000
+Gaelic languages 22040100
+Welsh 22040200
+Slavic languages 22050000
+Belarusan (byelorussian) 22050100
+Bosnian 22050200
+Bulgarian 22050300
+Croatian 22050400
+Czech 22050500
+Macedonian 22050600
+Polish 22050700
+Russian 22050800
+Serbian 22050900
+Serbo-croatian 22051000
+Slovak 22051100
+Slovenian 22051200
+Ukrainian 22051300
+Baltic languages 22060000
+Latvian 22060100
+Lithuanian 22060200
+Finno-ugric languages 22070000
+Estonian 22070100
+Finnish 22070200
+Hungarian 22070300
+Greek 22080000
+
+--- PAGE 52 ---
+User Guide 2018 GSS - Cycle 32- Caregiving and Care Receiving
+50
+LANGUAGE TEXT LANGCODE
+Armenian 22090000
+Turkic languages 22100000
+Azerbaijani 22100100
+Turkish 22100200
+Afro-asiatic languages 22110000
+Berber languages (kabyle) 22110100
+Cushitic languages 22110200
+Oromo 22110201
+Somali 22110202
+Semitic languages 22110300
+Amharic 22110301
+Arabic 22110302
+Hebrew 22110303
+Maltese 22110304
+Tigrigna 22110305
+Indo-iranian languages 22120000
+Indo-aryan languages 22120100
+Bengali 22120101
+Gujarati 22120102
+Hindi 22120103
+Konkani 22120104
+Marathi 22120105
+Panjabi (punjabi) 22120106
+Sindhi 22120107
+Sinhala (sinhalese) 22120108
+Urdu 22120109
+Iranian languages 22120200
+Kurdish 22120201
+Pashto 22120202
+Persian (farsi) 22120203
+Dravidian languages 22130000
+Kannada 22130100
+Malayalam 22130200
+Tamil 22130300
+Telugu 22130400
+Japanese 22140000
+Korean 22150000
+Sino-tibetan languages 22160000
+Chinese languages 22160100
+Cantonese 22160101
+Chaochow (teochow) 22160102
+
+--- PAGE 53 ---
+51
+LANGUAGE TEXT LANGCODE
+Fukien 22160103
+Hakka 22160104
+Mandarin 22160105
+Shanghainese 22160106
+Taiwanese 22160107
+Tibetan languages 22160200
+Tai languages 22170000
+Lao 22170100
+Thai 22170200
+Austro-asiatic languages 22180000
+Khmer (cambodian) 22180100
+Vietnamese 22180200
+Malayo-polynesian languages 22190000
+Bisayan languages 22190100
+Ilocano 22190200
+Malay 22190300
+Pampango 22190400
+Tagalog (pilipino, filipino) 22190500
+Niger-congo languages 22200000
+Akan (twi) 22200100
+Bantu languages 22200200
+Lingala 22200201
+Rundi (kirundi) 22200202
+Rwanda (kinyarwanda) 22200203
+Shona 22200204
+Swahili 22200205
+Edo 22200300
+Igbo 22200400
+Wolof 22200500
+Creoles 22220000
+Non-verbal languages 22230000
+American sign language 22230100
+Quebec sign language 22230200
+Sign languages 22230300
+Other language - Specify 22240000
