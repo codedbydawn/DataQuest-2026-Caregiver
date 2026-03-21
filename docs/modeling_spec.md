@@ -1,74 +1,46 @@
 # Caregiver Distress Modeling Spec
 
-## Goal
-Ship one coherent, production-usable binary caregiver-distress risk model for the 2018 Statistics Canada GSS Cycle 32 PUMF in this repo.
+## Product goal
+This repo now implements a 2-stage caregiver distress analytics system for organizational decision support:
+- Stage 1: weighted XGBoost prediction of analyst-defined `distress_flag`
+- Stage 2: dashboard-ready scored outputs, explainability, subgroup risk concentration views, and resource-allocation tables
 
-## Source of Truth
-1. Raw repo contents
-2. `C32PUMF_Guide_E.pdf`
-3. `c32pumf_cgcr_codebook_NEW_E.pdf`
+## Verified data reality
+- Raw file present: `src/c32pumfm.sas7bdat`
+- Installed stack verified locally during implementation: `xgboost==3.0.5`, `scikit-learn==1.6.1`, `streamlit==1.45.1`
+- Local PDF codebook/user-guide files were not present in the workspace at implementation time, so critical assumptions were re-verified directly against raw columns and distributions
+- `WGHT_PER` is used as the person-level analysis weight
+- `WTBS_*` are excluded from prediction
 
-## Data Reality
-- The repo contains one raw person-level SAS file: `src/c32pumfm.sas7bdat`
-- The PUMF contains the required target variables and all selected non-leaky predictors
-- `WGHT_PER` is the person-level analysis weight
-- `WTBS_001` to `WTBS_500` are bootstrap weights reserved for survey variance and sensitivity analysis, not ordinary predictors
+## Target definition
+- Source items: `CRH_20`, `CRH_30`, `CRH_60`
+- Recoding: `1 -> 1`, `2 -> 0`, reserve/nonresponse codes -> `NaN`
+- `distress_score = count_yes(CRH_20, CRH_30, CRH_60)` with null preserved if all items are missing
+- `distress_flag = 1 if distress_score >= 1 else 0`
+- The target is an analyst-defined distress risk label, not a clinical diagnosis
 
-## Modeling Universe
-Official codebook universe for `CRH_20`, `CRH_30`, and `CRH_60`:
-- `DV_PROXY = 2`
-- `1 <= PAR_10 <= 99`
-- `2 <= HAP_10 <= 168`
-
-The public file in this repo does not expose raw `HAP_10`, only grouped `HAP_10C`. The production approximation implemented here is:
+## Universe logic
+Official codebook logic references raw `HAP_10`, but this PUMF contains only grouped `HAP_10C`. The implemented approximation is:
 - `DV_PROXY == 2`
 - `PAR_10 in 1..99`
 - `HAP_10C in 1..6`
-- plus non-missing analytic responses on the target items
+- non-missing analytic responses on the target items
 
-This intentionally keeps `HAP_10C == 1` rows because valid target responses exist there. Filtering to `HAP_10C >= 2` would be wrong.
+Rows with `HAP_10C == 1` are intentionally kept because valid CRH responses exist there.
 
-## Target Construction
-Primary target items:
-- `CRH_20`: worried or anxious because of caregiving
-- `CRH_30`: overwhelmed because of caregiving
-- `CRH_60`: depressed because of caregiving
-
-Recoding:
-- `1 -> 1`
-- `2 -> 0`
-- reserve codes -> `NaN`
-
-Derived targets:
-- `distress_score = count_yes(CRH_20, CRH_30, CRH_60)`
-- `distress_flag = 1 if distress_score >= 1 else 0`
-
-Important exclusions:
-- `ICS_*` is not part of the target
-- `FIS_*` is not part of the target
-- this is an analyst-defined distress risk label, not a clinical diagnosis
-
-## Predictor Set
-Approved feature families:
-- demographics
-- employment context
+## Final predictor philosophy
+Deployed predictors are limited to non-leaky circumstance/context variables covering:
+- demographics and geography
 - caregiving intensity
-- caregiving activity flags
-- support network
+- employment and flexibility context
+- caregiving task pattern
 - financial context
-- respondent health
+- caregiver health context
 
-Critical coding corrections enforced in code:
-- `ARX_10` is emotional support
-- `ARV_10` is visiting or calling
-- `OAC_20` means wanting additional support
-- `CHC_110K` is respondent mental illness
-- `CHC_110S` is aging or frailty
-- `FWA_137` has a stricter universe than `FWA_134`
-- `TTLINCG1` is used as derived grouped income without inventing extra missingness
+Borderline or extremely sparse narrow-universe variables were not deployed if they would make the model brittle or look co-determined with the outcome.
 
-## Leakage Policy
-The following are excluded from the predictor set:
+## Leakage exclusions
+The pipeline blocks:
 - `CRH_*`
 - `ICS_*`
 - `FIS_*`
@@ -77,29 +49,35 @@ The following are excluded from the predictor set:
 - `ICP_*`
 - `ITL_*`
 - `ITO_*`
-- other obvious downstream consequences of caregiving strain
+- `WLB_*`
+- `EMO_*`
 
-## Missingness and Encoding
-- Reserve codes are converted to `NaN` using column-specific reserve-code handling
-- Numeric features keep `NaN`
-- Categorical features use explicit `"Missing"` as a category through the preprocessing pipeline
-- No median or mode imputation is used
+## Cleaning and encoding
+- Reserve/special codes are explicitly mapped to `NaN`
+- Binary yes/no features are explicitly recoded to `1/0`
+- Numeric and ordinal fields keep `NaN` so XGBoost can route missing values
+- Nominal categoricals use deterministic impute-plus-one-hot preprocessing with a visible missing category
+- No target imputation is performed
 
-## Model
-- Weighted binary XGBoost classifier
-- `WGHT_PER` is normalized to mean 1 for fitting
-- `scale_pos_weight` is not layered on top of survey weights
+## Anti-overfitting controls
+- Train/validation/test split is created before fitting transforms
+- Model selection uses bounded 3-fold CV on the train/validation pool
+- Early stopping is used on a proper validation split
+- Sparse category growth is controlled with `OneHotEncoder(min_frequency=20)`
+- Train-vs-validation gaps are reported
+- A top-feature dominance sanity check is saved with the validation summary
 
-## Evaluation
-The training script reports:
-- analytic sample size
-- weighted and unweighted prevalence
-- ROC AUC
-- PR AUC
-- weighted and unweighted accuracy
-- feature missingness summary
+## Outputs
+The pipeline writes:
+- model artifact and metrics JSON
+- validation summary JSON
+- scored caregiver dataset
+- held-out test predictions
+- global SHAP importance table
+- SHAP summary / feature importance / calibration / threshold / subgroup / heatmap figures
+- subgroup risk summary
+- highest-risk segments and individuals tables
+- subgroup-specific top-driver table
 
-## Explanations
-- Global and row-level feature contributions are produced with XGBoost Tree SHAP via `pred_contribs=True`
-- The shipped app returns probability, binary label, and top contributors
-- No fabricated 4-tier class is produced
+## Dashboard
+The app is a Streamlit analytics dashboard reading saved artifacts from disk. It is designed for governments, health systems, and nonprofits reviewing concentrated distress risk rather than for caregiver self-assessment.

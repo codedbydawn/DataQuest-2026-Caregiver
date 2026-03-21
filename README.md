@@ -1,61 +1,68 @@
-# DAMB — Caregiver Distress Risk Pipeline
+# DAMB — Caregiver Distress Analytics System
 
-DAMB is a healthcare/wellness hackathon repo for estimating caregiver distress risk from the 2018 Statistics Canada General Social Survey (Cycle 32: Caregiving and Care Receiving) public-use microdata file. The repo now ships one coherent modeling path: a weighted binary XGBoost model for an analyst-defined `distress_flag`, plus a Flask demo that scores a single caregiver row and explains the prediction with top Tree SHAP contributors.
+This repo now ships a 2-stage caregiver distress analytics product for organizations such as governments, health systems, and nonprofits:
 
-## What This Repo Now Does
-- Loads the real raw PUMF in [`/Users/anuda/Desktop/DataQuest-2026-DAMB/src/c32pumfm.sas7bdat`](/Users/anuda/Desktop/DataQuest-2026-DAMB/src/c32pumfm.sas7bdat)
-- Applies reserve-code recoding without collapsing off-path skips into false negatives
-- Uses the codebook-faithful target based on:
-  - `CRH_20` worried/anxious
-  - `CRH_30` overwhelmed
-  - `CRH_60` depressed
-- Fits a weighted binary XGBoost classifier using `WGHT_PER`
-- Saves model, metrics, validation summary, and global feature importance artifacts
-- Exposes a Flask demo for single-row scoring
+1. a weighted XGBoost model that predicts individual caregiver distress risk
+2. a dashboard-oriented analytics layer that turns those predictions into SHAP explainability outputs, subgroup risk views, geography summaries, and resource-allocation tables
 
-## What It Explicitly Does Not Do
-- It does not use the notebook’s old burnout composite
-- It does not use clustering
-- It does not claim to predict a true 4-tier distress class
-- It does not use bootstrap weights as ordinary predictors
+The project is no longer centered on a caregiver survey front end, caregiver profile classes, or clustering-based personas.
 
-## Repo Layout
+## Data and target
+- Raw file: [`/Users/anuda/Desktop/DataQuest-2026-DAMB/src/c32pumfm.sas7bdat`](/Users/anuda/Desktop/DataQuest-2026-DAMB/src/c32pumfm.sas7bdat)
+- Main target items:
+  - `CRH_20`
+  - `CRH_30`
+  - `CRH_60`
+- Derived fields:
+  - `distress_score = count_yes(CRH_20, CRH_30, CRH_60)`
+  - `distress_flag = 1 if distress_score >= 1 else 0`
 
-```text
-DataQuest-2026-DAMB/
-├── app/                     # Flask demo for single-row scoring
-├── damb/                    # Audited data, modeling, and scoring modules
-├── docs/                    # Modeling spec and limitations
-├── model/                   # Trained model artifact and metrics
-├── reports/                 # Validation and global feature-importance outputs
-├── scripts/                 # Training entrypoints
-├── src/
-│   ├── c32pumfm.sas7bdat    # Raw Statistics Canada PUMF
-│   └── eda.ipynb            # Historical notebook, not the production pipeline
-└── tests/                   # Focused regression tests
-```
+This is an analyst-defined distress-risk label, not a clinical diagnosis.
 
-## Modeling Summary
-
-### Universe approximation
-The official codebook universe for the target items uses raw `HAP_10`, but this PUMF exposes only grouped `HAP_10C`. The shipped approximation is:
+## Universe approximation
+The official CRH-item universe references raw `HAP_10`, but the PUMF in this repo exposes only grouped `HAP_10C`. The implemented modeling universe is:
 - `DV_PROXY == 2`
 - `PAR_10 in 1..99`
 - `HAP_10C in 1..6`
+- non-missing target-item responses
 
-Rows with `HAP_10C == 1` remain in scope because valid target responses exist there. Filtering to `HAP_10C >= 2` would be wrong.
+Rows with `HAP_10C == 1` are intentionally kept because valid target responses are present there.
 
-### Target
-- `distress_score = count_yes(CRH_20, CRH_30, CRH_60)`
-- `distress_flag = 1 if distress_score >= 1 else 0`
+## Modeling design
+- Survey reserve / nonresponse codes are explicitly recoded to `NaN`
+- Yes/no predictors are explicitly recoded to `1/0`
+- Numeric and ordinal features keep missing values so XGBoost can route them
+- Nominal features use deterministic impute-plus-one-hot preprocessing
+- Leakage-prone prefixes such as `CRH_*`, `ICS_*`, `FIS_*`, `ICL_*`, `ICB_*`, `ICP_*`, `ITL_*`, `ITO_*`, `WLB_*`, and `EMO_*` are blocked from the feature set
+- `WGHT_PER` is used as the sample weight
 
-### Predictors
-The predictor set is intentionally limited to non-leaky demographics, employment, caregiving intensity, activity flags, support network, financial context, and respondent health variables. Leakage-prone variables such as `ICS_*`, `FIS_*`, `CRH_*`, and downstream caregiving-consequence variables are excluded.
+## Stage 2 outputs
+Training writes organization-facing artifacts including:
+- scored caregiver dataset with predicted probability, label, and risk band
+- held-out test predictions
+- global SHAP importance table
+- SHAP summary, feature importance, risk distribution, calibration, threshold tradeoff, subgroup comparison, and heatmap figures
+- subgroup risk summaries
+- highest-risk segment and highest-risk individual tables
+- subgroup-specific top-driver tables
+- artifact manifest and model report markdown
 
-### Weights and explanations
-- `WGHT_PER` is used as the person-level analysis weight
-- `WTBS_*` are preserved for survey-design sensitivity work, but not used as predictors
-- Feature explanations use XGBoost Tree SHAP contributions via `pred_contribs=True`
+## Repo layout
+
+```text
+DataQuest-2026-DAMB/
+├── app/                     # Streamlit analytics dashboard
+├── damb/                    # Data prep, modeling, scoring, and reporting modules
+├── data/processed/          # Scored outputs
+├── docs/                    # Modeling spec and generated report
+├── model/                   # Serialized model and metrics
+├── reports/                 # Figures, tables, validation summaries
+├── scripts/                 # Training entrypoint
+├── src/
+│   ├── c32pumfm.sas7bdat    # Raw Statistics Canada PUMF
+│   └── eda.ipynb            # Historical notebook, not the deployed system
+└── tests/                   # Focused regression tests
+```
 
 ## Install
 
@@ -63,34 +70,41 @@ The predictor set is intentionally limited to non-leaky demographics, employment
 python -m pip install -r requirements.txt
 ```
 
-## Train The Model
+## Train
 
 ```bash
 python scripts/train_binary_model.py
 ```
 
-This writes:
-- [`/Users/anuda/Desktop/DataQuest-2026-DAMB/model/caregiver_distress_model.joblib`](/Users/anuda/Desktop/DataQuest-2026-DAMB/model/caregiver_distress_model.joblib)
-- [`/Users/anuda/Desktop/DataQuest-2026-DAMB/model/model_metrics.json`](/Users/anuda/Desktop/DataQuest-2026-DAMB/model/model_metrics.json)
-- [`/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/validation_summary.json`](/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/validation_summary.json)
-- [`/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/global_shap_importance.csv`](/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/global_shap_importance.csv)
-- [`/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/feature_missingness.csv`](/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/feature_missingness.csv)
+Key outputs land in:
+- [`/Users/anuda/Desktop/DataQuest-2026-DAMB/model`](/Users/anuda/Desktop/DataQuest-2026-DAMB/model)
+- [`/Users/anuda/Desktop/DataQuest-2026-DAMB/reports`](/Users/anuda/Desktop/DataQuest-2026-DAMB/reports)
+- [`/Users/anuda/Desktop/DataQuest-2026-DAMB/data/processed`](/Users/anuda/Desktop/DataQuest-2026-DAMB/data/processed)
 
-## Run Tests
+## Latest verified run
+- Final analytic sample: `5,587`
+- Weighted prevalence: `0.6908`
+- Validation ROC AUC / PR AUC: `0.7524 / 0.8593`
+- Held-out test ROC AUC / PR AUC: `0.7148 / 0.8429`
+- Held-out test weighted accuracy: `0.6965`
+- Selected operating threshold: `0.625`
+
+## Dashboard
+
+```bash
+streamlit run app/app.py
+```
+
+The dashboard reads saved artifacts and focuses on organization-facing decision support rather than caregiver self-assessment.
+
+## Tests
 
 ```bash
 pytest
 ```
 
-## Run The Demo App
-
-```bash
-flask --app app.app run
-```
-
-The demo form captures a subset of high-signal inputs and leaves all other expected model features as missing. The scorer still runs because the trained preprocessing pipeline handles explicit missing categories and numeric `NaN`s consistently.
-
-## Notes
-- The authoritative implementation details live in [`/Users/anuda/Desktop/DataQuest-2026-DAMB/docs/modeling_spec.md`](/Users/anuda/Desktop/DataQuest-2026-DAMB/docs/modeling_spec.md)
-- The Flask app is a hackathon demo, not a clinical device
-- The model output is best interpreted as caregiver-distress risk probability under this analyst-defined labeling scheme
+## Caveats
+- No local PDF codebook/user-guide files were present in the workspace during implementation, so the final system was verified directly against repo contents and raw-column inspection
+- The PUMF contains grouped `HAP_10C`, not raw `HAP_10`
+- Bootstrap survey weights are not used as predictors
+- Historical notebook logic remains for reference only and does not define the deployed target
