@@ -1,0 +1,107 @@
+{
+  "raw_shape": {
+    "rows": 20258,
+    "columns": 45
+  },
+  "universe_counts": {
+    "raw_rows": 20258,
+    "dv_proxy_eq_2": 19882,
+    "par_10_between_1_99": 7450,
+    "hap_10c_between_1_6": 7172,
+    "modeled_universe_rows": 6972,
+    "hap_10c_eq_1_rows": 4517
+  },
+  "target_summary": {
+    "analytic_rows": 5587,
+    "unweighted_prevalence": 0.6975120816180419,
+    "weighted_prevalence": 0.6908321083353449,
+    "distress_score_distribution": {
+      "0": 1690,
+      "1": 1565,
+      "2": 1208,
+      "3": 1124
+    },
+    "target_items": {
+      "CRH_20": {
+        "label": "Worried or anxious",
+        "available_rows": 5564,
+        "yes_count": 3567
+      },
+      "CRH_30": {
+        "label": "Overwhelmed",
+        "available_rows": 5490,
+        "yes_count": 2320
+      },
+      "CRH_60": {
+        "label": "Depressed",
+        "available_rows": 5442,
+        "yes_count": 1466
+      }
+    }
+  },
+  "weights_check": {
+    "non_null": true,
+    "strictly_positive": true
+  },
+  "missingness_top10": [
+    {
+      "feature": "RES_10",
+      "missing_rate": 0.8611061392518347
+    },
+    {
+      "feature": "CHC_110S",
+      "missing_rate": 0.7941650259531055
+    },
+    {
+      "feature": "CHC_110K",
+      "missing_rate": 0.7941650259531055
+    },
+    {
+      "feature": "FWA_137",
+      "missing_rate": 0.5645247896903526
+    },
+    {
+      "feature": "FWA_134",
+      "missing_rate": 0.48988723823160907
+    },
+    {
+      "feature": "WTI_110",
+      "missing_rate": 0.4750313227134419
+    },
+    {
+      "feature": "NWE_110",
+      "missing_rate": 0.36226955432253444
+    },
+    {
+      "feature": "COW_10",
+      "missing_rate": 0.3610166457848577
+    },
+    {
+      "feature": "UHW_16GR",
+      "missing_rate": 0.3601217111150886
+    },
+    {
+      "feature": "ARV_40",
+      "missing_rate": 0.3542151422946125
+    }
+  ],
+  "leakage_check": {
+    "overlap": []
+  },
+  "hap_10c_approximation_note": "The official codebook universe uses raw HAP_10 >= 2. This PUMF exposes only grouped HAP_10C, so the model uses HAP_10C in {1..6}. Rows with HAP_10C == 1 remain in-scope because valid CRH responses exist there.",
+  "metrics": {
+    "train_rows": 4190,
+    "test_rows": 1397,
+    "train_prevalence_unweighted": 0.6976133651551313,
+    "test_prevalence_unweighted": 0.6972083035075161,
+    "train_prevalence_weighted": 0.6918993761191731,
+    "test_prevalence_weighted": 0.6875540488691959,
+    "roc_auc_unweighted": 0.7671928777044771,
+    "roc_auc_weighted": 0.7975803646365802,
+    "pr_auc_unweighted": 0.8729452894963203,
+    "pr_auc_weighted": 0.8861209882841157,
+    "weighted_accuracy": 0.7652188824014575,
+    "unweighted_accuracy": 0.7659269863994274,
+    "train_weighted_accuracy": 0.8559653155119158
+  }
+}

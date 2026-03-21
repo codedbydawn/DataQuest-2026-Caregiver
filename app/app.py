@@ -1,51 +1,75 @@
+from __future__ import annotations
+
+from pathlib import Path
+
 from flask import Flask, render_template, request
+
+from damb.config import FORM_FIELDS, MODEL_ARTIFACT_PATH
+from damb.scoring import CaregiverDistressScorer, load_trained_scorer
 
 
 app = Flask(__name__)
 
+_SCORER: CaregiverDistressScorer | None = None
 
-# TODO: Load the trained clustering model from ../model/model.pkl once training is complete.
-# TODO: Load any preprocessing artifacts needed to reproduce notebook feature engineering at runtime.
-# TODO: Keep inference local only; no external ML APIs should be introduced here.
-MODEL = None
+
+def get_scorer() -> CaregiverDistressScorer:
+    global _SCORER
+    if _SCORER is None:
+        if not Path(MODEL_ARTIFACT_PATH).exists():
+            raise FileNotFoundError(
+                "Model artifact not found. Run `python scripts/train_binary_model.py` first."
+            )
+        _SCORER = load_trained_scorer(str(MODEL_ARTIFACT_PATH))
+    return _SCORER
+
+
+def parse_form_payload(form_payload: dict[str, str]) -> dict[str, float | None]:
+    parsed: dict[str, float | None] = {}
+    for field in FORM_FIELDS:
+        raw_value = form_payload.get(field["name"], "").strip()
+        if raw_value == "":
+            parsed[field["name"]] = None
+            continue
+        parsed[field["name"]] = float(raw_value)
+    return parsed
 
 
 @app.get("/")
 def index():
-    """Render the caregiver input form."""
-    return render_template("index.html")
+    return render_template("index.html", fields=FORM_FIELDS)
 
 
 @app.post("/predict")
 def predict():
-    """Receive caregiver input, run clustering, and render profile results."""
     form_data = request.form.to_dict()
-
-    # TODO: Validate and transform form inputs into the feature format expected by the model.
-    # TODO: Align form fields with the final person-level feature set derived from maindata and any
-    # TODO: episode-level aggregations built from episode via PUMFID.
-    # TODO: Load the trained model artifact if it is not already available in memory.
-    # TODO: Run local inference against the saved clustering model.
-    # TODO: Map the predicted cluster to the final caregiver profile copy and resource list.
-    # TODO: Pass real prediction results into the template context.
-    results = {
-        "profile_name": "TODO: Profile Name",
-        "profile_description": "TODO: Replace with generated caregiver profile summary.",
-        "top_factors": [
-            "TODO: Factor 1",
-            "TODO: Factor 2",
-            "TODO: Factor 3",
-        ],
-        "next_steps": [
-            "TODO: Add recommended next step.",
-        ],
-        "resources": [
-            "TODO: Add Canadian caregiver support resource.",
-        ],
-        "submitted_data": form_data,
-    }
-
-    return render_template("results.html", results=results)
+    parsed = parse_form_payload(form_data)
+    try:
+        scorer = get_scorer()
+        score = scorer.score_row(parsed)
+        probability = score["probability"]
+        label = score["label"]
+        results = {
+            "risk_label": "Elevated caregiver-distress risk" if label == 1 else "Lower caregiver-distress risk",
+            "risk_summary": (
+                "This row scores above the binary distress threshold derived from the CRH caregiver-distress items."
+                if label == 1
+                else "This row scores below the binary distress threshold derived from the CRH caregiver-distress items."
+            ),
+            "probability_pct": round(probability * 100, 1),
+            "binary_label": label,
+            "top_factors": score["top_contributors"],
+            "resources": score["resources"],
+            "submitted_data": form_data,
+        }
+        return render_template("results.html", results=results, artifact_ready=True)
+    except FileNotFoundError as exc:
+        return render_template(
+            "results.html",
+            artifact_ready=False,
+            error_message=str(exc),
+            results=None,
+        )
 
 
 if __name__ == "__main__":

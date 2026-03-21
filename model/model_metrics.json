@@ -1,0 +1,15 @@
+{
+  "train_rows": 4190,
+  "test_rows": 1397,
+  "train_prevalence_unweighted": 0.6976133651551313,
+  "test_prevalence_unweighted": 0.6972083035075161,
+  "train_prevalence_weighted": 0.6918993761191731,
+  "test_prevalence_weighted": 0.6875540488691959,
+  "roc_auc_unweighted": 0.7671928777044771,
+  "roc_auc_weighted": 0.7975803646365802,
+  "pr_auc_unweighted": 0.8729452894963203,
+  "pr_auc_weighted": 0.8861209882841157,
+  "weighted_accuracy": 0.7652188824014575,
+  "unweighted_accuracy": 0.7659269863994274,
+  "train_weighted_accuracy": 0.8559653155119158
+}

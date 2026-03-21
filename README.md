@@ -1,92 +1,96 @@
-# DAMB — DataQuest 2026
+# DAMB — Caregiver Distress Risk Pipeline
 
-DAMB is a hackathon-built machine learning web application for profiling burnout risk among unpaid caregivers in Canada. A caregiver submits their situation through a web form, the app routes the inputs through a locally saved clustering model, and the results page returns a caregiver profile, the main factors shaping that profile, and tailored Canadian support resources. The project uses Statistics Canada's General Social Survey on Caregiving and Care Receiving and is designed to support earlier visibility into caregiver strain.
+DAMB is a healthcare/wellness hackathon repo for estimating caregiver distress risk from the 2018 Statistics Canada General Social Survey (Cycle 32: Caregiving and Care Receiving) public-use microdata file. The repo now ships one coherent modeling path: a weighted binary XGBoost model for an analyst-defined `distress_flag`, plus a Flask demo that scores a single caregiver row and explains the prediction with top Tree SHAP contributors.
 
-This repository currently contains an architecture scaffold only. The frontend flow, form fields, and caregiver profile framing may change as the team completes data cleaning, feature engineering, exploratory analysis, and final clustering validation.
+## What This Repo Now Does
+- Loads the real raw PUMF in [`/Users/anuda/Desktop/DataQuest-2026-DAMB/src/c32pumfm.sas7bdat`](/Users/anuda/Desktop/DataQuest-2026-DAMB/src/c32pumfm.sas7bdat)
+- Applies reserve-code recoding without collapsing off-path skips into false negatives
+- Uses the codebook-faithful target based on:
+  - `CRH_20` worried/anxious
+  - `CRH_30` overwhelmed
+  - `CRH_60` depressed
+- Fits a weighted binary XGBoost classifier using `WGHT_PER`
+- Saves model, metrics, validation summary, and global feature importance artifacts
+- Exposes a Flask demo for single-row scoring
 
-## Caregiver Profiles
+## What It Explicitly Does Not Do
+- It does not use the notebook’s old burnout composite
+- It does not use clustering
+- It does not claim to predict a true 4-tier distress class
+- It does not use bootstrap weights as ordinary predictors
 
-### Profile 1 — Solo Caregiver, High Risk
-No support network, high hours, employment affected, financially strained. Highest burnout risk. Requires immediate intervention.
-
-### Profile 2 — Overburdened Balancer
-Moderate hours with inconsistent support. Managing work and caregiving simultaneously with no reliable relief. Elevated and escalating burnout risk.
-
-### Profile 3 — Supported but Fatigued
-Consistent support network present, higher hours, but fatigue is accumulating over time. Moderate burnout risk with a clear trajectory if support is not maintained.
-
-### Profile 4 — High Emotional Load, Low Visibility
-Lower caregiving hours but severe psychological impact. Often invisible in standard burnout assessments because hours appear manageable. Moderate to high risk.
-
-### Profile 5 — Stable Long-Term Caregiver
-Long caregiving duration, adapted routines, reliable support. Lowest acute burnout risk but should be monitored for cumulative fatigue.
-
-## Tech Stack
-
-- Python
-- Flask
-- pandas
-- NumPy
-- scikit-learn
-- pyreadstat
-- joblib
-- matplotlib
-- seaborn
-- Jupyter notebooks
-- Statistics Canada GSS Cycle 32 PUMF documentation
-
-## Folder Structure
+## Repo Layout
 
 ```text
 DataQuest-2026-DAMB/
-├── src/                  # Source SAS files and existing notebooks; do not modify
-├── data/
-│   └── processed/        # Cleaned and joined CSV outputs from preprocessing
-├── model/                # Saved model artifacts such as model.pkl
-├── app/
-│   ├── app.py            # Flask entry point
-│   ├── templates/
-│   │   ├── index.html    # Caregiver input form
-│   │   └── results.html  # Profile results page
-│   └── static/
-│       └── style.css     # Custom styling overrides
-├── requirements.txt      # Python dependencies across data, ML, and app phases
-└── README.md
+├── app/                     # Flask demo for single-row scoring
+├── damb/                    # Audited data, modeling, and scoring modules
+├── docs/                    # Modeling spec and limitations
+├── model/                   # Trained model artifact and metrics
+├── reports/                 # Validation and global feature-importance outputs
+├── scripts/                 # Training entrypoints
+├── src/
+│   ├── c32pumfm.sas7bdat    # Raw Statistics Canada PUMF
+│   └── eda.ipynb            # Historical notebook, not the production pipeline
+└── tests/                   # Focused regression tests
 ```
 
-## Data Notes
+## Modeling Summary
 
-- The source data comes from the 2018 General Social Survey (GSS) Cycle 32: Caregiving and Care Receiving Public Use Microdata File.
-- The survey target population is non-institutionalized people aged 15 and older living in the 10 provinces of Canada.
-- The repository includes two SAS files in `src/` that should remain untouched:
-  - `maindata.sas7bdat`: person-level respondent data
-  - `episode.sas7bdat`: episode-level activity data
-- The two files share `PUMFID`, which is the common identifier available in both files.
-- The person-level file includes `WGHT_PER`, while the episode-level file includes `WGHT_EPI`. The team should use the appropriate survey weight during analysis and reporting.
-- According to the user guide, GSS variables are limited to 8 characters or fewer and reserve codes include `6` for valid skip and `9` for not stated.
+### Universe approximation
+The official codebook universe for the target items uses raw `HAP_10`, but this PUMF exposes only grouped `HAP_10C`. The shipped approximation is:
+- `DV_PROXY == 2`
+- `PAR_10 in 1..99`
+- `HAP_10C in 1..6`
 
-## Installation
+Rows with `HAP_10C == 1` remain in scope because valid target responses exist there. Filtering to `HAP_10C >= 2` would be wrong.
 
-Install dependencies with:
+### Target
+- `distress_score = count_yes(CRH_20, CRH_30, CRH_60)`
+- `distress_flag = 1 if distress_score >= 1 else 0`
+
+### Predictors
+The predictor set is intentionally limited to non-leaky demographics, employment, caregiving intensity, activity flags, support network, financial context, and respondent health variables. Leakage-prone variables such as `ICS_*`, `FIS_*`, `CRH_*`, and downstream caregiving-consequence variables are excluded.
+
+### Weights and explanations
+- `WGHT_PER` is used as the person-level analysis weight
+- `WTBS_*` are preserved for survey-design sensitivity work, but not used as predictors
+- Feature explanations use XGBoost Tree SHAP contributions via `pred_contribs=True`
+
+## Install
 
 ```bash
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
-## Running The App Locally
-
-From the `app/` directory, run:
+## Train The Model
 
 ```bash
-flask run
+python scripts/train_binary_model.py
 ```
+
+This writes:
+- [`/Users/anuda/Desktop/DataQuest-2026-DAMB/model/caregiver_distress_model.joblib`](/Users/anuda/Desktop/DataQuest-2026-DAMB/model/caregiver_distress_model.joblib)
+- [`/Users/anuda/Desktop/DataQuest-2026-DAMB/model/model_metrics.json`](/Users/anuda/Desktop/DataQuest-2026-DAMB/model/model_metrics.json)
+- [`/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/validation_summary.json`](/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/validation_summary.json)
+- [`/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/global_shap_importance.csv`](/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/global_shap_importance.csv)
+- [`/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/feature_missingness.csv`](/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/feature_missingness.csv)
+
+## Run Tests
+
+```bash
+pytest
+```
+
+## Run The Demo App
+
+```bash
+flask --app app.app run
+```
+
+The demo form captures a subset of high-signal inputs and leaves all other expected model features as missing. The scorer still runs because the trained preprocessing pipeline handles explicit missing categories and numeric `NaN`s consistently.
 
 ## Notes
-
-- The model must be trained in the notebooks and saved to `model/model.pkl` before the Flask app can run end-to-end.
-- `pyreadstat` is required to read the SAS `.sas7bdat` files in `src/`.
-- All inference is intended to run locally from the saved model artifact. No external ML APIs are used.
-- The preprocessing notebooks will need to decide how to aggregate episode-level records into person-level features before training the clustering model.
-- The Statistics Canada user guide recommends weighted analysis for estimates; unweighted survey summaries should be treated with caution.
-- The current frontend is a placeholder scaffold. Input fields, wording, and submission flow may change once the final feature set is confirmed.
-- The five caregiver profiles listed above are the current intended product framing, but naming, descriptions, and cluster mapping may still change after cleaning the data and validating the model outputs.
+- The authoritative implementation details live in [`/Users/anuda/Desktop/DataQuest-2026-DAMB/docs/modeling_spec.md`](/Users/anuda/Desktop/DataQuest-2026-DAMB/docs/modeling_spec.md)
+- The Flask app is a hackathon demo, not a clinical device
+- The model output is best interpreted as caregiver-distress risk probability under this analyst-defined labeling scheme
