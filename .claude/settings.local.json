@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import pandas; print\\(pandas.__version__\\)\")",
+      "Bash(python -c \"import pyreadstat; print\\(pyreadstat.__version__\\)\")",
+      "Bash(pip install:*)",
+      "Read(//c/Users/mikec/**)",
+      "Read(//c/Users/mikec/PROJECTS/**)"
+    ]
+  }
+}
