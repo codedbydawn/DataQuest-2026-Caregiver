@@ -1,0 +1,3 @@
+artifact_type,path,used_for_training,rows,columns
+raw_model_input,/Users/anuda/Desktop/DataQuest-2026-DAMB/src/c32pumfm.sas7bdat,True,20258,1071
+cleaned_output_scored_dataset,data/processed/scored_caregiver_distress.csv,False,5587,11

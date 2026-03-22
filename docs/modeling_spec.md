@@ -31,13 +31,16 @@ Rows with `HAP_10C == 1` are intentionally kept because valid CRH responses exis
 ## Final predictor philosophy
 Deployed predictors are limited to non-leaky circumstance/context variables covering:
 - demographics and geography
+- household structure and caregiving relationship context
 - caregiving intensity
+- care receiver proximity and dwelling context
 - employment and flexibility context
 - caregiving task pattern
 - financial context
+- immigration, language, and transportation access context
 - caregiver health context
 
-Borderline or extremely sparse narrow-universe variables were not deployed if they would make the model brittle or look co-determined with the outcome.
+Borderline or extremely sparse narrow-universe variables were not deployed if they would make the model brittle or look co-determined with the outcome. The final context expansion was pruned to retain broadly populated objective fields and drop the sparsest off-path items.
 
 ## Leakage exclusions
 The pipeline blocks:

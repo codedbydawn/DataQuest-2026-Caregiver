@@ -1,0 +1,40 @@
+{
+  "active_training_path": "scripts/train_binary_model.py -> prepare_training_frame() -> fit_binary_model() -> save_training_outputs()",
+  "historical_notebook_path": "src/eda.ipynb exists but is not invoked by the active training script.",
+  "pdf_status": "No relevant local GSS Cycle 32 caregiving codebook/user-guide PDF was found under the repo or Desktop workspace during this audit.",
+  "duplicates": {
+    "raw_duplicate_rows": 0,
+    "raw_duplicate_ids": 0,
+    "modeled_duplicate_rows": 0,
+    "modeled_duplicate_ids": 0
+  },
+  "selected_threshold": 0.6250000000000001,
+  "top_5_drivers": [
+    {
+      "feature": "APR_70",
+      "mean_abs_shap": 0.22542666
+    },
+    {
+      "feature": "APR_60",
+      "mean_abs_shap": 0.1733961
+    },
+    {
+      "feature": "SEX",
+      "mean_abs_shap": 0.1470236
+    },
+    {
+      "feature": "ARX_10",
+      "mean_abs_shap": 0.113660604
+    },
+    {
+      "feature": "HAP_10C",
+      "mean_abs_shap": 0.11316969
+    }
+  ],
+  "overfitting": {
+    "train_vs_validation_roc_gap": 0.028221159140905283,
+    "train_val_vs_test_roc_gap": 0.07393825892660377,
+    "train_vs_validation_pr_gap": 0.012119067746817036,
+    "train_val_vs_test_pr_gap": 0.03518549033131624
+  }
+}

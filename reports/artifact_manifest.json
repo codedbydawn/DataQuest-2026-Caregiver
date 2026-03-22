@@ -5,13 +5,19 @@
   "scored_data": "/Users/anuda/Desktop/DataQuest-2026-DAMB/data/processed/scored_caregiver_distress.csv",
   "test_predictions": "/Users/anuda/Desktop/DataQuest-2026-DAMB/data/processed/test_predictions.csv",
   "feature_missingness": "/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/tables/feature_missingness.csv",
+  "feature_audit": "/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/tables/feature_audit.csv",
+  "missingness_report": "/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/tables/missingness_report.csv",
+  "fold_metrics": "/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/tables/fold_metrics.csv",
   "global_shap": "/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/tables/global_shap_importance.csv",
   "subgroup_risk": "/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/tables/subgroup_risk_summary.csv",
+  "subgroup_diagnostics": "/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/tables/subgroup_diagnostics.csv",
   "high_risk_segments": "/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/tables/highest_risk_segments.csv",
   "high_risk_individuals": "/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/tables/highest_risk_individuals.csv",
   "subgroup_drivers": "/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/tables/subgroup_top_drivers.csv",
   "threshold_curve": "/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/tables/threshold_curve.csv",
+  "threshold_analysis": "/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/tables/threshold_analysis.csv",
   "calibration_table": "/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/tables/calibration_table.csv",
+  "calibration_report": "/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/calibration_report.json",
   "feature_importance_fig": "/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/figures/feature_importance_bar.png",
   "shap_summary_fig": "/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/figures/shap_summary.png",
   "risk_distribution_fig": "/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/figures/risk_distribution_histogram.png",
@@ -23,5 +29,6 @@
   "income_heatmap": "/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/figures/income_by_risk_band.png",
   "relationship_heatmap": "/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/figures/relationship_by_risk_band.png",
   "artifact_manifest": "/Users/anuda/Desktop/DataQuest-2026-DAMB/reports/artifact_manifest.json",
-  "model_report": "/Users/anuda/Desktop/DataQuest-2026-DAMB/docs/model_report.md"
+  "model_report": "/Users/anuda/Desktop/DataQuest-2026-DAMB/docs/model_report.md",
+  "model_card": "/Users/anuda/Desktop/DataQuest-2026-DAMB/docs/model_card.md"
 }

@@ -1,0 +1,44 @@
+variable,meaning,family,used_in_model,raw_coding_summary,cleaned_coding,missing_pct_after_cleaning,weighted_missing_pct_after_cleaning,notes
+CRH_20,Worried or anxious,target,False,"1, 2, 9","1 -> 1, 2 -> 0, reserve codes -> NaN, then distress_score/distress_flag derived",0.004116699480937892,0.0045651704303998454,
+CRH_30,Overwhelmed,target,False,"1, 2, 9","1 -> 1, 2 -> 0, reserve codes -> NaN, then distress_score/distress_flag derived",0.01736173259352067,0.018105075463606804,
+CRH_60,Depressed,target,False,"1, 2, 9","1 -> 1, 2 -> 0, reserve codes -> NaN, then distress_score/distress_flag derived",0.025953105423304097,0.028376601643965115,
+AGEGR10,Age group,ordinal predictor,True,"1, 2, 3, 4, 5, 6, 7","reserve codes -> NaN, numeric/ordinal preserved",0.0,0.0,
+SEX,Sex,nominal predictor,True,"1, 2","reserve codes -> NaN, values cast to string/object, Missing category added in encoder",0.0,0.0,
+MARSTAT,Marital status,nominal predictor,True,"1, 2, 3, 4, 5, 6, 99","reserve codes -> NaN, values cast to string/object, Missing category added in encoder",0.001431895471630571,0.0017809112614592159,
+LIVARR08,Living arrangement,nominal predictor,True,"1, 2, 3, 4, 5, 6, 7, 8","reserve codes -> NaN, values cast to string/object, Missing category added in encoder",0.0,0.0,
+PRV,Province,nominal predictor,True,"10, 11, 12, 13, 24, 35, 46, 47, 48, 59","reserve codes -> NaN, values cast to string/object, Missing category added in encoder",0.0,0.0,
+PAR_10,People helped,numeric/count predictor,True,"1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 22, 24, 25, 30, 32, 40, 60","reserve codes -> NaN, numeric/ordinal preserved",0.0,0.0,
+HAP_10C,Weekly care hours,ordinal predictor,True,"1, 2, 3, 4, 5, 6","reserve codes -> NaN, numeric/ordinal preserved",0.0,0.0,
+COW_10,Class of worker,nominal predictor,True,"1, 2, 3, 6, 9","reserve codes -> NaN, values cast to string/object, Missing category added in encoder",0.3610166457848577,0.311285200313449,
+WTI_110,Work tenure indicator,nominal predictor,True,"1, 2, 3, 6, 9","reserve codes -> NaN, values cast to string/object, Missing category added in encoder",0.4750313227134419,0.4322119223942434,
+NWE_110,Weeks worked,numeric/count predictor,True,54 distinct values; min=1.0000; max=99.0000,"reserve codes -> NaN, numeric/ordinal preserved",0.36226955432253444,0.31559720831692856,
+UHW_16GR,Usual hours worked,ordinal predictor,True,"1, 2, 3, 4, 6, 9","reserve codes -> NaN, numeric/ordinal preserved",0.3601217111150886,0.3135470596376492,
+UCA_10,Work flexibility indicator,nominal predictor,True,"1, 2, 6, 9","reserve codes -> NaN, values cast to string/object, Missing category added in encoder",0.35224628602112046,0.3088863719490176,
+FWA_134,Employer family-care leave,binary predictor,True,"1, 2, 6, 9","1 -> 1, 2 -> 0, reserve codes -> NaN",0.48988723823160907,0.44681479227615734,
+FWA_137,Employer telework option,binary predictor,True,"1, 2, 6, 9","1 -> 1, 2 -> 0, reserve codes -> NaN",0.5645247896903526,0.5319960877182126,
+APR_10,APR_10,binary predictor,True,"1, 2, 9","1 -> 1, 2 -> 0, reserve codes -> NaN",0.0008949346697691068,0.0010046233678873636,
+APR_20,APR_20,binary predictor,True,"1, 2, 9","1 -> 1, 2 -> 0, reserve codes -> NaN",0.0030427778772149634,0.0034759040123525653,
+APR_30,APR_30,binary predictor,True,"1, 2, 9","1 -> 1, 2 -> 0, reserve codes -> NaN",0.004116699480937892,0.004544151864877602,
+APR_40,APR_40,binary predictor,True,"1, 2, 9","1 -> 1, 2 -> 0, reserve codes -> NaN",0.0051906210846608195,0.005785001551212214,
+APR_50,APR_50,binary predictor,True,"1, 2, 9","1 -> 1, 2 -> 0, reserve codes -> NaN",0.005548594952568463,0.0065509906597888325,
+APR_60,APR_60,binary predictor,True,"1, 2, 9","1 -> 1, 2 -> 0, reserve codes -> NaN",0.004116699480937892,0.004924691449382374,
+APR_70,APR_70,binary predictor,True,"1, 2, 9","1 -> 1, 2 -> 0, reserve codes -> NaN",0.004295686414891713,0.003620410772868166,
+APR_80,APR_80,binary predictor,True,"1, 2, 9","1 -> 1, 2 -> 0, reserve codes -> NaN",0.004295686414891713,0.004045347940333822,
+ARV_10,Visits or calls care receiver,binary predictor,True,"1, 2, 6, 9","1 -> 1, 2 -> 0, reserve codes -> NaN",0.33040988007875427,0.42280329842664194,
+ARX_10,Provides emotional support,binary predictor,True,"1, 2, 9","1 -> 1, 2 -> 0, reserve codes -> NaN",0.006264542688383748,0.0101650837749047,
+TTLINCG1,Personal income group,ordinal predictor,True,"1, 2, 3, 4, 5, 6, 7","reserve codes -> NaN, numeric/ordinal preserved",0.0,0.0,
+FAMINCG1,Household income group,ordinal predictor,True,"1, 2, 3, 4, 5, 6, 7, 8","reserve codes -> NaN, numeric/ordinal preserved",0.0,0.0,
+CHC_100,Own long-term health condition,binary predictor,True,"1, 2, 9","1 -> 1, 2 -> 0, reserve codes -> NaN",0.019151601933058888,0.017461384725423842,
+WGHT_PER,Person weight,weight,False,5568 distinct values; min=17.3681; max=24649.8574,"reserve codes -> NaN, numeric/ordinal preserved",0.0,0.0,
+PRA_10GR,PRA_10GR,analytics-only,False,"1, 2, 3, 4, 5, 6, 7, 8, 9, 96, 99",not in deployed model,0.861643100053696,0.8685777359363029,
+OAC_20,OAC_20,excluded,False,"1, 2, 9",not in deployed model,0.0,0.0,Explicitly not deployed; interpreted as wanting additional support and treated as borderline/co-determined.
+ARV_40,ARV_40,excluded,False,"1, 2, 6, 9",not in deployed model,0.0,0.0,Not deployed in the current active pipeline.
+ARX_40,ARX_40,excluded,False,"1, 2, 6, 9",not in deployed model,0.0,0.0,Not deployed in the current active pipeline.
+RES_10,RES_10,excluded,False,"1, 2, 6, 9",not in deployed model,0.0,0.0,Not deployed; very high missingness in the modeled universe.
+ACD_80,ACD_80,excluded,False,"1, 2, 9",not in deployed model,0.0,0.0,Not deployed in the current active pipeline.
+ACD_90,ACD_90,excluded,False,"1, 2, 9",not in deployed model,0.0,0.0,Not deployed in the current active pipeline.
+CHC_110K,CHC_110K,excluded,False,"1, 2, 6",not in deployed model,0.0,0.0,Not deployed; very high missingness in the modeled universe.
+CHC_110S,CHC_110S,excluded,False,"1, 2, 6",not in deployed model,0.0,0.0,Not deployed; very high missingness in the modeled universe.
+ICS_40,ICS_40,excluded,False,"1, 2, 3, 4, 9",not in deployed model,0.0,0.0,Explicit leakage exclusion.
+FIS_10A,FIS_10A,excluded,False,"1, 2, 6",not in deployed model,0.0,0.0,Explicit leakage exclusion.
+FIS_10H,FIS_10H,excluded,False,"1, 2, 6",not in deployed model,0.0,0.0,Explicit leakage exclusion.

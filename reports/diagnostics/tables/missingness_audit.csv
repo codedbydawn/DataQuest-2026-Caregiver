@@ -1,0 +1,44 @@
+variable,used_in_model,missing_count,missing_pct,weighted_missing_pct,likely_reason,action_taken
+CRH_20,False,23,0.004116699480937892,0.0045651704303998454,mixed nonresponse,target recode
+CRH_30,False,97,0.01736173259352067,0.018105075463606804,mixed nonresponse,target recode
+CRH_60,False,145,0.025953105423304097,0.028376601643965115,mixed nonresponse,target recode
+AGEGR10,True,0,0.0,0.0,unknown,left as NaN
+SEX,True,0,0.0,0.0,unknown,explicit missing category
+MARSTAT,True,8,0.001431895471630571,0.0017809112614592159,mixed nonresponse,explicit missing category
+LIVARR08,True,0,0.0,0.0,unknown,explicit missing category
+PRV,True,0,0.0,0.0,unknown,explicit missing category
+PAR_10,True,0,0.0,0.0,unknown,left as NaN
+HAP_10C,True,0,0.0,0.0,unknown,left as NaN
+COW_10,True,2017,0.3610166457848577,0.311285200313449,mostly structural/off-path,explicit missing category
+WTI_110,True,2654,0.4750313227134419,0.4322119223942434,mostly structural/off-path,explicit missing category
+NWE_110,True,2024,0.36226955432253444,0.31559720831692856,mostly structural/off-path,left as NaN
+UHW_16GR,True,2012,0.3601217111150886,0.3135470596376492,mostly structural/off-path,left as NaN
+UCA_10,True,1968,0.35224628602112046,0.3088863719490176,mostly structural/off-path,explicit missing category
+FWA_134,True,2737,0.48988723823160907,0.44681479227615734,mostly structural/off-path,binary recode
+FWA_137,True,3154,0.5645247896903526,0.5319960877182126,mostly structural/off-path,binary recode
+APR_10,True,5,0.0008949346697691068,0.0010046233678873636,mixed nonresponse,binary recode
+APR_20,True,17,0.0030427778772149634,0.0034759040123525653,mixed nonresponse,binary recode
+APR_30,True,23,0.004116699480937892,0.004544151864877602,mixed nonresponse,binary recode
+APR_40,True,29,0.0051906210846608195,0.005785001551212214,mixed nonresponse,binary recode
+APR_50,True,31,0.005548594952568463,0.0065509906597888325,mixed nonresponse,binary recode
+APR_60,True,23,0.004116699480937892,0.004924691449382374,mixed nonresponse,binary recode
+APR_70,True,24,0.004295686414891713,0.003620410772868166,mixed nonresponse,binary recode
+APR_80,True,24,0.004295686414891713,0.004045347940333822,mixed nonresponse,binary recode
+ARV_10,True,1846,0.33040988007875427,0.42280329842664194,mostly structural/off-path,binary recode
+ARX_10,True,35,0.006264542688383748,0.0101650837749047,mixed nonresponse,binary recode
+TTLINCG1,True,0,0.0,0.0,unknown,left as NaN
+FAMINCG1,True,0,0.0,0.0,unknown,left as NaN
+CHC_100,True,107,0.019151601933058888,0.017461384725423842,mixed nonresponse,binary recode
+WGHT_PER,False,0,0.0,0.0,unknown,left as NaN
+PRA_10GR,False,4814,0.861643100053696,0.8685777359363029,mostly structural/off-path,dropped/excluded
+OAC_20,False,0,0.0,0.0,unknown,dropped/excluded
+ARV_40,False,0,0.0,0.0,unknown,dropped/excluded
+ARX_40,False,0,0.0,0.0,unknown,dropped/excluded
+RES_10,False,0,0.0,0.0,unknown,dropped/excluded
+ACD_80,False,0,0.0,0.0,unknown,dropped/excluded
+ACD_90,False,0,0.0,0.0,unknown,dropped/excluded
+CHC_110K,False,0,0.0,0.0,unknown,dropped/excluded
+CHC_110S,False,0,0.0,0.0,unknown,dropped/excluded
+ICS_40,False,0,0.0,0.0,unknown,dropped/excluded
+FIS_10A,False,0,0.0,0.0,unknown,dropped/excluded
+FIS_10H,False,0,0.0,0.0,unknown,dropped/excluded

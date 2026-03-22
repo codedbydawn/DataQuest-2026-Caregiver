@@ -15,10 +15,14 @@ from .config import (
     AGE_GROUP_LABELS,
     ARTIFACT_MANIFEST_PATH,
     CALIBRATION_FIG_PATH,
+    CALIBRATION_REPORT_PATH,
     CALIBRATION_TABLE_PATH,
     FEATURE_IMPORTANCE_FIG_PATH,
+    FEATURE_AUDIT_PATH,
     FEATURE_MISSINGNESS_PATH,
+    FOLD_METRICS_PATH,
     GLOBAL_SHAP_PATH,
+    HEALTH_CONDITION_LABELS,
     HEATMAP_PATHS,
     HIGH_RISK_INDIVIDUALS_PATH,
     HIGH_RISK_SEGMENTS_PATH,
@@ -27,8 +31,10 @@ from .config import (
     INCOME_GROUP_LABELS,
     METRICS_PATH,
     MODEL_ARTIFACT_PATH,
+    MODEL_CARD_PATH,
     MODEL_FEATURES,
     MODEL_REPORT_PATH,
+    MISSINGNESS_REPORT_PATH,
     PAIRWISE_SEGMENTS,
     PROCESSED_DIR,
     PROVINCE_LABELS,
@@ -40,11 +46,13 @@ from .config import (
     SEX_LABELS,
     SHAP_SUMMARY_FIG_PATH,
     SUBGROUP_COLUMNS,
+    SUBGROUP_DIAGNOSTICS_PATH,
     SUBGROUP_COMPARISON_FIG_PATH,
     SUBGROUP_DRIVERS_PATH,
     SUBGROUP_RISK_PATH,
     TABLES_DIR,
     TEST_PREDICTIONS_PATH,
+    THRESHOLD_ANALYSIS_PATH,
     THRESHOLD_CURVE_PATH,
     THRESHOLD_FIG_PATH,
     VALIDATION_PATH,
@@ -67,15 +75,22 @@ def _default_output_paths() -> dict[str, Any]:
         "scored_data": SCORED_DATA_PATH,
         "test_predictions": TEST_PREDICTIONS_PATH,
         "feature_missingness": FEATURE_MISSINGNESS_PATH,
+        "feature_audit": FEATURE_AUDIT_PATH,
+        "missingness_report": MISSINGNESS_REPORT_PATH,
+        "fold_metrics": FOLD_METRICS_PATH,
         "global_shap": GLOBAL_SHAP_PATH,
         "subgroup_risk": SUBGROUP_RISK_PATH,
+        "subgroup_diagnostics": SUBGROUP_DIAGNOSTICS_PATH,
         "high_risk_segments": HIGH_RISK_SEGMENTS_PATH,
         "high_risk_individuals": HIGH_RISK_INDIVIDUALS_PATH,
         "subgroup_drivers": SUBGROUP_DRIVERS_PATH,
         "threshold_curve": THRESHOLD_CURVE_PATH,
+        "threshold_analysis": THRESHOLD_ANALYSIS_PATH,
         "calibration_table": CALIBRATION_TABLE_PATH,
+        "calibration_report": CALIBRATION_REPORT_PATH,
         "artifact_manifest": ARTIFACT_MANIFEST_PATH,
         "model_report": MODEL_REPORT_PATH,
+        "model_card": MODEL_CARD_PATH,
         "feature_importance_fig": FEATURE_IMPORTANCE_FIG_PATH,
         "shap_summary_fig": SHAP_SUMMARY_FIG_PATH,
         "risk_distribution_fig": RISK_DISTRIBUTION_FIG_PATH,
@@ -141,6 +156,7 @@ def _display_series(series: pd.Series, column: str) -> pd.Series:
         "SEX": SEX_LABELS,
         "HAP_10C": HOUR_GROUP_LABELS,
         "TTLINCG1": INCOME_GROUP_LABELS,
+        "PRA_10GR": HEALTH_CONDITION_LABELS,
     }.get(column)
     if mapping is None:
         return series.fillna("Missing").astype(str)
@@ -241,7 +257,7 @@ def _build_high_risk_individuals(scored: pd.DataFrame) -> pd.DataFrame:
         if column in ordered.columns:
             ordered[column] = _display_series(ordered[column], column)
     if "PRA_10GR" in ordered.columns:
-        ordered["PRA_10GR"] = ordered["PRA_10GR"].fillna("Missing").astype(str)
+        ordered["PRA_10GR"] = _display_series(ordered["PRA_10GR"], "PRA_10GR")
     return ordered
 
 
@@ -383,6 +399,9 @@ def _write_model_report(
 ) -> None:
     test_metrics = training_result.metrics["test_metrics"]
     validation_metrics = training_result.metrics["validation_metrics"]
+    threshold_modes = training_result.metrics.get("threshold_modes", {"balanced": training_result.metrics["selected_threshold"]})
+    missing_strategy = training_result.metrics.get("selected_missing_strategy", "unknown")
+    feature_count = training_result.metrics.get("selected_feature_count", len(training_result.artifact.get("feature_columns", [])))
     content = f"""# Caregiver Distress Model Report
 
 ## Final system
@@ -393,7 +412,7 @@ def _write_model_report(
 - Raw file: `src/c32pumfm.sas7bdat`
 - Target: `CRH_20`, `CRH_30`, `CRH_60`
 - Universe approximation: `DV_PROXY == 2`, `PAR_10 in 1..99`, `HAP_10C in 1..6`
-- Local PDF codebook/user-guide files were not present in the workspace during implementation, so final checks were anchored to repo contents plus raw-column inspection
+- Valid skip values are treated as off-path / structural missingness rather than substantive "No"
 
 ## Analytic sample
 - Raw rows: {prepared.universe_counts["raw_rows"]}
@@ -408,22 +427,70 @@ def _write_model_report(
 - Test PR AUC: {test_metrics["pr_auc"]:.4f}
 - Test weighted accuracy: {test_metrics["weighted_accuracy"]:.4f}
 - Test weighted Brier score: {test_metrics["weighted_brier"]:.4f}
-- Selected threshold: {training_result.metrics["selected_threshold"]:.3f}
+- Selected threshold (balanced mode): {training_result.metrics["selected_threshold"]:.3f}
+- Threshold modes: {threshold_modes}
+- Selected missing-data strategy: {missing_strategy}
+- Selected feature count: {feature_count}
 
 ## Outputs
 - Artifact manifest: `{manifest["artifact_manifest"]}`
 - Scored dataset: `{manifest["scored_data"]}`
 - SHAP importance table: `{manifest["global_shap"]}`
 - Highest-risk segments: `{manifest["high_risk_segments"]}`
+- Calibration report: `{manifest["calibration_report"]}`
+- Feature audit: `{manifest["feature_audit"]}`
+- Fold metrics: `{manifest["fold_metrics"]}`
+- Subgroup diagnostics: `{manifest["subgroup_diagnostics"]}`
 - Dashboard app: `streamlit run app/app.py`
 
 ## Limitations
 - The PUMF exposes grouped `HAP_10C` rather than raw `HAP_10`, so the official target universe is approximated
-- Survey design bootstrap weights are not used in the predictive model itself
-- Several narrow-universe health/detail variables were excluded from deployment to avoid brittle modeling with extreme missingness
+- Calibration and threshold choice are optimized for stakeholder-facing ranking and triage, not for causal interpretation
+- Several work and receiver-detail variables carry structural missingness because of survey routing
 - This output estimates analyst-defined distress risk, not a clinical diagnosis
 """
     output_path.write_text(content)
+
+
+def _write_model_card(prepared: PreparedDataset, training_result: TrainingResult, output_path: Path) -> None:
+    test_metrics = training_result.metrics["test_metrics"]
+    missing_strategy = training_result.metrics.get("selected_missing_strategy", "unknown")
+    precision = test_metrics.get("precision", float("nan"))
+    recall = test_metrics.get("recall", float("nan"))
+    specificity = test_metrics.get("specificity", float("nan"))
+    card = f"""# Model Card
+
+## Intended use
+- Stakeholder-facing caregiver distress risk ranking and subgroup concentration review.
+- Appropriate for organizational triage, planning, and dashboarding.
+- Not appropriate for clinical diagnosis, causal claims, or automated adverse decisions.
+
+## Model summary
+- Model family: XGBoost binary classifier with post-hoc sigmoid calibration.
+- Operating modes: balanced, high_precision, high_recall.
+- Default dashboard threshold: {training_result.metrics["selected_threshold"]:.3f} (balanced mode).
+- Selected missing-data strategy: {missing_strategy}.
+
+## Data summary
+- Raw rows: {prepared.universe_counts["raw_rows"]}
+- Analytic rows: {prepared.universe_counts["after_target_nonmissing"]}
+- Weighted prevalence: {prepared.target_summary["weighted_prevalence"]:.4f}
+
+## Test performance
+- ROC AUC: {test_metrics["roc_auc"]:.4f}
+- PR AUC: {test_metrics["pr_auc"]:.4f}
+- Weighted accuracy: {test_metrics["weighted_accuracy"]:.4f}
+- Precision / Recall / Specificity: {precision:.4f} / {recall:.4f} / {specificity:.4f}
+- Weighted Brier score: {test_metrics["weighted_brier"]:.4f}
+- Log loss: {test_metrics.get("log_loss", float("nan")):.4f}
+
+## Key limitations
+- The official CRH universe uses raw HAP_10, but the PUMF only exposes grouped HAP_10C.
+- Valid skips are structural and can induce heavy routed missingness.
+- The dataset is an all-respondent survey with routed caregiving and care-receiving sections.
+- Model explanations reflect model behavior, not causality.
+"""
+    output_path.write_text(card)
 
 
 def save_training_outputs(
@@ -436,14 +503,21 @@ def save_training_outputs(
 
     joblib.dump(training_result.artifact, paths["model_artifact"])
     prepared.missingness.to_csv(paths["feature_missingness"], index=False)
+    training_result.feature_audit.to_csv(paths["feature_audit"], index=False)
+    training_result.missingness_report.to_csv(paths["missingness_report"], index=False)
+    training_result.fold_metrics.to_csv(paths["fold_metrics"], index=False)
     training_result.threshold_curve.to_csv(paths["threshold_curve"], index=False)
+    training_result.threshold_analysis.to_csv(paths["threshold_analysis"], index=False)
     training_result.calibration_table.to_csv(paths["calibration_table"], index=False)
     training_result.test_predictions.to_csv(paths["test_predictions"], index=False)
+    training_result.subgroup_diagnostics.to_csv(paths["subgroup_diagnostics"], index=False)
 
+    score_columns = [column for column in dict.fromkeys([ID_COLUMN, WEIGHT_COLUMN, *MODEL_FEATURES, *SUBGROUP_COLUMNS]) if column in prepared.frame.columns]
+    passthrough_columns = [column for column in [ID_COLUMN, WEIGHT_COLUMN, *SUBGROUP_COLUMNS] if column in prepared.frame.columns]
     scored = score_frame(
         artifact=training_result.artifact,
-        frame=prepared.frame.loc[:, list(dict.fromkeys([ID_COLUMN, WEIGHT_COLUMN, *MODEL_FEATURES, *SUBGROUP_COLUMNS]))].copy(),
-        passthrough_columns=[ID_COLUMN, WEIGHT_COLUMN, *SUBGROUP_COLUMNS],
+        frame=prepared.frame.loc[:, score_columns].copy(),
+        passthrough_columns=passthrough_columns,
     )
     scored.to_csv(paths["scored_data"], index=False)
 
@@ -485,7 +559,7 @@ def save_training_outputs(
     _plot_heatmap(income_heatmap, "Income by risk band", Path(paths["heatmaps"]["income_risk_band"]["png"]))
     _plot_heatmap(
         relationship_heatmap,
-        "Relationship group by risk band",
+        "Main health condition by risk band",
         Path(paths["heatmaps"]["relationship_risk_band"]["png"]),
     )
     _plot_calibration(training_result.calibration_table, Path(paths["calibration_fig"]))
@@ -505,8 +579,9 @@ def save_training_outputs(
             "strictly_positive": bool((prepared.frame[WEIGHT_COLUMN] > 0).all()),
         },
         "feature_missingness_top10": prepared.missingness.head(10).to_dict(orient="records"),
-        "final_feature_list": list(MODEL_FEATURES),
-        "leakage_audit": leakage_audit(MODEL_FEATURES),
+        "feature_strategy_comparison_top": training_result.tuning_results.head(10).to_dict(orient="records"),
+        "final_feature_list": list(training_result.artifact["feature_columns"]),
+        "leakage_audit": leakage_audit(training_result.artifact["feature_columns"]),
         "hap_10c_approximation_note": (
             "The official CRH universe uses raw HAP_10, but this PUMF exposes only grouped HAP_10C. "
             "The production system therefore uses HAP_10C in {1..6} and keeps HAP_10C == 1 rows when valid CRH responses exist."
@@ -524,6 +599,8 @@ def save_training_outputs(
         json.dump(_json_ready(training_result.metrics), handle, indent=2)
     with open(paths["validation"], "w", encoding="utf-8") as handle:
         json.dump(_json_ready(validation_summary), handle, indent=2)
+    with open(paths["calibration_report"], "w", encoding="utf-8") as handle:
+        json.dump(_json_ready(training_result.calibration_report), handle, indent=2)
 
     manifest = {
         "model_artifact": str(paths["model_artifact"]),
@@ -532,13 +609,19 @@ def save_training_outputs(
         "scored_data": str(paths["scored_data"]),
         "test_predictions": str(paths["test_predictions"]),
         "feature_missingness": str(paths["feature_missingness"]),
+        "feature_audit": str(paths["feature_audit"]),
+        "missingness_report": str(paths["missingness_report"]),
+        "fold_metrics": str(paths["fold_metrics"]),
         "global_shap": str(paths["global_shap"]),
         "subgroup_risk": str(paths["subgroup_risk"]),
+        "subgroup_diagnostics": str(paths["subgroup_diagnostics"]),
         "high_risk_segments": str(paths["high_risk_segments"]),
         "high_risk_individuals": str(paths["high_risk_individuals"]),
         "subgroup_drivers": str(paths["subgroup_drivers"]),
         "threshold_curve": str(paths["threshold_curve"]),
+        "threshold_analysis": str(paths["threshold_analysis"]),
         "calibration_table": str(paths["calibration_table"]),
+        "calibration_report": str(paths["calibration_report"]),
         "feature_importance_fig": str(paths["feature_importance_fig"]),
         "shap_summary_fig": str(paths["shap_summary_fig"]),
         "risk_distribution_fig": str(paths["risk_distribution_fig"]),
@@ -551,9 +634,11 @@ def save_training_outputs(
         "relationship_heatmap": str(paths["heatmaps"]["relationship_risk_band"]["png"]),
         "artifact_manifest": str(paths["artifact_manifest"]),
         "model_report": str(paths["model_report"]),
+        "model_card": str(paths["model_card"]),
     }
     with open(paths["artifact_manifest"], "w", encoding="utf-8") as handle:
         json.dump(manifest, handle, indent=2)
 
     _write_model_report(prepared, training_result, manifest, Path(paths["model_report"]))
+    _write_model_card(prepared, training_result, Path(paths["model_card"]))
     return {"manifest": manifest, "validation_summary": validation_summary, "global_shap": global_shap}

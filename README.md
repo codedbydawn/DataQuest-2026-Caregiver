@@ -34,6 +34,7 @@ Rows with `HAP_10C == 1` are intentionally kept because valid target responses a
 - Numeric and ordinal features keep missing values so XGBoost can route them
 - Nominal features use deterministic impute-plus-one-hot preprocessing
 - Leakage-prone prefixes such as `CRH_*`, `ICS_*`, `FIS_*`, `ICL_*`, `ICB_*`, `ICP_*`, `ITL_*`, `ITO_*`, `WLB_*`, and `EMO_*` are blocked from the feature set
+- The production feature set includes a pruned objective context subset focused on household structure, caregiver/receiver relationship, proximity, transportation, minority status, and language
 - `WGHT_PER` is used as the sample weight
 
 ## Stage 2 outputs

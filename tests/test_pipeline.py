@@ -17,21 +17,47 @@ from damb.data import (
     recode_binary_yes_no,
     recode_special_codes,
 )
-from damb.modeling import TrainingResult, build_preprocessing_pipeline, leakage_audit
+from damb.modeling import TrainingResult, _select_threshold, build_preprocessing_pipeline, leakage_audit
 from damb.scoring import CaregiverDistressScorer, score_frame
 
 
 def make_feature_frame(rows: int = 20) -> pd.DataFrame:
     base = pd.DataFrame(index=range(rows))
+    ordinal_columns = {"AGEGR10", "AGEPRGR0", "NLC_100C", "CRRCPAGR", "PRD_10", "HAP_10C", "UHW_16GR", "TTLINCG1", "FAMINCG1"}
+    binary_columns = {
+        "PHSDFLG",
+        "SENFLAG",
+        "PRN_25",
+        "UCA_10",
+        "FWA_134",
+        "FWA_137",
+        "APR_10",
+        "APR_20",
+        "APR_30",
+        "APR_40",
+        "APR_50",
+        "APR_60",
+        "APR_70",
+        "APR_80",
+        "ARV_10",
+        "ARX_10",
+        "PRW_10",
+        "PTN_10",
+        "VISMIN",
+        "CHC_100",
+    }
+    nominal_columns = {"MARSTAT", "LIVARR08", "LUC_RST", "PRV", "PRG10GR", "PRU_10", "COW_10", "WTI_110", "LAN_01"}
     for idx, column in enumerate(MODEL_FEATURES):
         if column in {"PAR_10", "NWE_110"}:
             base[column] = np.linspace(1, rows, rows)
-        elif column in {"AGEGR10", "HAP_10C", "UHW_16GR", "TTLINCG1", "FAMINCG1"}:
+        elif column in ordinal_columns:
             base[column] = (np.arange(rows) % 4) + 1
-        elif column in {"SEX", "UCA_10", "FWA_134", "FWA_137", "APR_10", "APR_20", "APR_30", "APR_40", "APR_50", "APR_60", "APR_70", "APR_80", "ARV_10", "ARX_10", "CHC_100"}:
+        elif column in binary_columns:
             base[column] = np.where(np.arange(rows) % 2 == 0, 1.0, 2.0)
         elif column == "PRV":
             base[column] = np.where(np.arange(rows) % 2 == 0, 35.0, 24.0)
+        elif column in nominal_columns:
+            base[column] = (np.arange(rows) % 3) + 1
         else:
             base[column] = (np.arange(rows) % 3) + 1
     base["PUMFID"] = np.arange(1000, 1000 + rows)
@@ -133,6 +159,17 @@ def test_preprocessing_is_deterministic() -> None:
     preprocessor_one.fit(frame.loc[:, MODEL_FEATURES])
     preprocessor_two.fit(frame.loc[:, MODEL_FEATURES])
     assert preprocessor_one.get_feature_names_out().tolist() == preprocessor_two.get_feature_names_out().tolist()
+
+
+def test_threshold_selection_avoids_all_positive_guard_failure() -> None:
+    truth = pd.Series([1, 1, 1, 1, 0, 0, 0, 0])
+    probabilities = np.array([0.70, 0.69, 0.68, 0.67, 0.66, 0.64, 0.30, 0.20])
+    weights = pd.Series(np.ones(len(truth)))
+    threshold, curve = _select_threshold(truth, probabilities, weights)
+    assert threshold >= 0.65
+    chosen = curve.loc[curve["threshold"] == threshold].iloc[0]
+    assert chosen["specificity"] > 0.0
+    assert chosen["positive_rate"] < 1.0
 
 
 def test_single_row_and_batch_scoring_work() -> None:

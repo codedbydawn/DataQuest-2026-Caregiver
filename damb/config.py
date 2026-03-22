@@ -26,8 +26,15 @@ HIGH_RISK_INDIVIDUALS_PATH = TABLES_DIR / "highest_risk_individuals.csv"
 SUBGROUP_DRIVERS_PATH = TABLES_DIR / "subgroup_top_drivers.csv"
 THRESHOLD_CURVE_PATH = TABLES_DIR / "threshold_curve.csv"
 CALIBRATION_TABLE_PATH = TABLES_DIR / "calibration_table.csv"
+THRESHOLD_ANALYSIS_PATH = TABLES_DIR / "threshold_analysis.csv"
+FEATURE_AUDIT_PATH = TABLES_DIR / "feature_audit.csv"
+MISSINGNESS_REPORT_PATH = TABLES_DIR / "missingness_report.csv"
+FOLD_METRICS_PATH = TABLES_DIR / "fold_metrics.csv"
+SUBGROUP_DIAGNOSTICS_PATH = TABLES_DIR / "subgroup_diagnostics.csv"
 ARTIFACT_MANIFEST_PATH = REPORTS_DIR / "artifact_manifest.json"
 MODEL_REPORT_PATH = DOCS_DIR / "model_report.md"
+MODEL_CARD_PATH = DOCS_DIR / "model_card.md"
+CALIBRATION_REPORT_PATH = REPORTS_DIR / "calibration_report.json"
 
 FEATURE_IMPORTANCE_FIG_PATH = FIGURES_DIR / "feature_importance_bar.png"
 SHAP_SUMMARY_FIG_PATH = FIGURES_DIR / "shap_summary.png"
@@ -66,10 +73,19 @@ TARGET_ITEM_LABELS = {
 
 MODEL_FEATURES = (
     "AGEGR10",
-    "SEX",
     "MARSTAT",
+    "PHSDFLG",
+    "AGEPRGR0",
+    "SENFLAG",
     "LIVARR08",
+    "LUC_RST",
     "PRV",
+    "NLC_100C",
+    "CRRCPAGR",
+    "PRN_25",
+    "PRG10GR",
+    "PRD_10",
+    "PRU_10",
     "PAR_10",
     "HAP_10C",
     "COW_10",
@@ -89,8 +105,12 @@ MODEL_FEATURES = (
     "APR_80",
     "ARV_10",
     "ARX_10",
+    "PRW_10",
+    "PTN_10",
     "TTLINCG1",
     "FAMINCG1",
+    "VISMIN",
+    "LAN_01",
     "CHC_100",
 )
 
@@ -105,6 +125,10 @@ NUMERIC_FEATURES = (
 
 ORDINAL_FEATURES = (
     "AGEGR10",
+    "AGEPRGR0",
+    "NLC_100C",
+    "CRRCPAGR",
+    "PRD_10",
     "HAP_10C",
     "UHW_16GR",
     "TTLINCG1",
@@ -112,13 +136,16 @@ ORDINAL_FEATURES = (
 )
 
 NOMINAL_FEATURES = (
-    "SEX",
     "MARSTAT",
     "LIVARR08",
+    "LUC_RST",
     "PRV",
+    "PRG10GR",
+    "PRU_10",
     "COW_10",
     "WTI_110",
     "UCA_10",
+    "LAN_01",
 )
 
 BINARY_FEATURES = tuple(
@@ -168,8 +195,19 @@ RESERVE_CODE_MAP = {
     "AGEGR10": {96, 97, 98, 99},
     "SEX": {6, 7, 8, 9},
     "MARSTAT": {96, 97, 98, 99},
+    "PHSDFLG": {6, 7, 8, 9},
+    "AGEPRGR0": {96, 97, 98, 99},
+    "SENFLAG": {6, 7, 8, 9},
     "LIVARR08": {96, 97, 98, 99},
+    "LUC_RST": {96, 97, 98, 99},
     "PRV": {96, 97, 98, 99},
+    "NLC_100C": {6, 7, 8, 9},
+    "CRGVAGGR": {96, 97, 98, 99},
+    "CRRCPAGR": {996, 997, 998, 999},
+    "PRN_25": {6, 7, 8, 9},
+    "PRG10GR": {96, 97, 98, 99},
+    "PRD_10": {96, 97, 98, 99},
+    "PRU_10": {6, 7, 8, 9},
     "PRA_10GR": {96, 97, 98, 99},
     "COW_10": {6, 7, 8, 9},
     "WTI_110": {6, 7, 8, 9},
@@ -188,8 +226,17 @@ RESERVE_CODE_MAP = {
     "APR_80": {6, 7, 8, 9},
     "ARV_10": {6, 7, 8, 9},
     "ARX_10": {6, 7, 8, 9},
+    "PGN_25": {6, 7, 8, 9},
+    "PGW_10": {6, 7, 8, 9},
+    "PGW_20": {6, 7, 8, 9},
+    "PRW_10": {6, 7, 8, 9},
+    "PRW_20": {6, 7, 8, 9},
+    "PTN_10": {6, 7, 8, 9},
     "TTLINCG1": {96, 97, 98, 99},
     "FAMINCG1": {96, 97, 98, 99},
+    "BPR_16": {6, 7, 8, 9},
+    "VISMIN": {6, 7, 8, 9},
+    "LAN_01": {6, 7, 8, 9},
     "CHC_100": {6, 7, 8, 9},
     "CRH_20": {6, 7, 8, 9},
     "CRH_30": {6, 7, 8, 9},
@@ -240,30 +287,53 @@ SEX_LABELS = {
 }
 
 HOUR_GROUP_LABELS = {
-    1: "<10 hours",
-    2: "10-19 hours",
-    3: "20-29 hours",
-    4: "30-39 hours",
-    5: "40-49 hours",
-    6: "50+ hours",
+    1: "Less than 10 hours",
+    2: "10 to 19 hours",
+    3: "20 to 29 hours",
+    4: "30 to 39 hours",
+    5: "40 to 49 hours",
+    6: "50 hours or more",
 }
 
 INCOME_GROUP_LABELS = {
-    1: "<$20k",
-    2: "$20k-$39.9k",
-    3: "$40k-$59.9k",
-    4: "$60k-$79.9k",
-    5: "$80k-$99.9k",
-    6: "$100k-$119.9k",
-    7: "$120k+",
+    1: "Less than $20,000",
+    2: "$20,000 to $39,999",
+    3: "$40,000 to $59,999",
+    4: "$60,000 to $79,999",
+    5: "$80,000 to $99,999",
+    6: "$100,000 to $119,999",
+    7: "$120,000 or more",
+}
+
+HEALTH_CONDITION_LABELS = {
+    1: "Arthritis",
+    2: "Cardiovascular disease",
+    3: "Back problems",
+    4: "Cancer",
+    5: "Mental illness",
+    6: "Alzheimer's disease or dementia",
+    7: "Injury from an accident",
+    8: "Aging or frailty",
+    9: "Other",
 }
 
 FRIENDLY_NAMES = {
     "AGEGR10": "Age group",
     "SEX": "Sex",
     "MARSTAT": "Marital status",
+    "PHSDFLG": "Spouse or partner lives in household",
+    "AGEPRGR0": "Spouse or partner age group",
+    "SENFLAG": "Seniors in household",
     "LIVARR08": "Living arrangement",
+    "LUC_RST": "Population centre indicator",
     "PRV": "Province",
+    "NLC_100C": "Number of children",
+    "CRGVAGGR": "Primary caregiver age group",
+    "CRRCPAGR": "Primary care receiver age group",
+    "PRN_25": "Primary care receiver sex",
+    "PRG10GR": "Relationship to primary care receiver",
+    "PRD_10": "Distance to primary care receiver",
+    "PRU_10": "Primary care receiver usual dwelling",
     "PAR_10": "People helped",
     "HAP_10C": "Weekly care hours",
     "COW_10": "Class of worker",
@@ -275,8 +345,16 @@ FRIENDLY_NAMES = {
     "FWA_137": "Employer telework option",
     "ARV_10": "Visits or calls care receiver",
     "ARX_10": "Provides emotional support",
+    "PGN_25": "Primary caregiver sex",
+    "PGW_10": "Primary caregiver employment status",
+    "PGW_20": "Primary caregiver works 30+ hours",
+    "PRW_10": "Primary care receiver employment status",
+    "PRW_20": "Primary care receiver works 30+ hours",
+    "PTN_10": "Neighbourhood public transportation access",
     "TTLINCG1": "Personal income group",
     "FAMINCG1": "Household income group",
+    "BPR_16": "Landed immigrant status",
+    "VISMIN": "Visible minority status",
+    "LAN_01": "Knowledge of official languages",
     "CHC_100": "Own long-term health condition",
 }
-

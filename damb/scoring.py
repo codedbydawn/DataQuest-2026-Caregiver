@@ -70,8 +70,16 @@ def score_frame(
 ) -> pd.DataFrame:
     passthrough = list(passthrough_columns or [])
     prepared = _prepare_features(frame, artifact["feature_columns"])
-    probabilities = artifact["model"].predict_proba(artifact["preprocessor"].transform(prepared))[:, 1]
+    raw_probabilities = artifact["model"].predict_proba(artifact["preprocessor"].transform(prepared))[:, 1]
+    calibrator_name = artifact.get("calibrator_name", "uncalibrated")
+    if calibrator_name == "sigmoid" and artifact.get("sigmoid_calibrator") is not None:
+        probabilities = artifact["sigmoid_calibrator"].predict_proba(np.clip(raw_probabilities, 1e-6, 1.0 - 1e-6).reshape(-1, 1))[:, 1]
+    elif calibrator_name == "isotonic" and artifact.get("isotonic_calibrator") is not None:
+        probabilities = artifact["isotonic_calibrator"].predict(np.clip(raw_probabilities, 1e-6, 1.0 - 1e-6))
+    else:
+        probabilities = raw_probabilities
     scored = frame.loc[:, [column for column in passthrough if column in frame.columns]].copy()
+    scored["predicted_probability_raw"] = raw_probabilities
     scored["predicted_probability"] = probabilities
     scored["predicted_label"] = (probabilities >= float(artifact["threshold"])).astype(int)
     scored["risk_band"] = pd.cut(

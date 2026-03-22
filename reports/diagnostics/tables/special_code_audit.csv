@@ -1,0 +1,44 @@
+variable,family,raw_values_seen,values_mapped_to_nan,values_mapped_to_0,values_mapped_to_1,notes
+WGHT_PER,weight,20092 distinct values; min=10.3541; max=30702.1052,,,,No explicit reserve mapping in code.
+CRH_20,target,"1, 2, 6, 9","6, 7, 8, 9",2,1,6=off-path/structural (inferred); 7=don't know (inferred); 8=refusal (inferred); 9=not stated (inferred)
+CRH_30,target,"1, 2, 6, 9","6, 7, 8, 9",2,1,6=off-path/structural (inferred); 7=don't know (inferred); 8=refusal (inferred); 9=not stated (inferred)
+CRH_60,target,"1, 2, 6, 9","6, 7, 8, 9",2,1,6=off-path/structural (inferred); 7=don't know (inferred); 8=refusal (inferred); 9=not stated (inferred)
+AGEGR10,ordinal predictor,"1, 2, 3, 4, 5, 6, 7","96, 97, 98, 99",,,96=off-path/structural (inferred); 97=don't know (inferred); 98=refusal (inferred); 99=not stated (inferred)
+SEX,nominal predictor,"1, 2","6, 7, 8, 9",,,6=off-path/structural (inferred); 7=don't know (inferred); 8=refusal (inferred); 9=not stated (inferred)
+MARSTAT,nominal predictor,"1, 2, 3, 4, 5, 6, 99","96, 97, 98, 99",,,96=off-path/structural (inferred); 97=don't know (inferred); 98=refusal (inferred); 99=not stated (inferred)
+LIVARR08,nominal predictor,"1, 2, 3, 4, 5, 6, 7, 8","96, 97, 98, 99",,,96=off-path/structural (inferred); 97=don't know (inferred); 98=refusal (inferred); 99=not stated (inferred)
+PRV,nominal predictor,"10, 11, 12, 13, 24, 35, 46, 47, 48, 59","96, 97, 98, 99",,,96=off-path/structural (inferred); 97=don't know (inferred); 98=refusal (inferred); 99=not stated (inferred)
+PAR_10,numeric/count predictor,28 distinct values; min=0.0000; max=999.0000,"996, 997, 998, 999",,,996=off-path/structural (inferred); 997=don't know (inferred); 998=refusal (inferred); 999=not stated (inferred)
+HAP_10C,ordinal predictor,"0, 1, 2, 3, 4, 5, 6, 96, 99","96, 97, 98, 99",,,96=off-path/structural (inferred); 97=don't know (inferred); 98=refusal (inferred); 99=not stated (inferred)
+COW_10,nominal predictor,"1, 2, 3, 6, 9","6, 7, 8, 9",,,6=off-path/structural (inferred); 7=don't know (inferred); 8=refusal (inferred); 9=not stated (inferred)
+WTI_110,nominal predictor,"1, 2, 3, 6, 9","6, 7, 8, 9",,,6=off-path/structural (inferred); 7=don't know (inferred); 8=refusal (inferred); 9=not stated (inferred)
+NWE_110,numeric/count predictor,54 distinct values; min=1.0000; max=99.0000,"96, 97, 98, 99",,,96=off-path/structural (inferred); 97=don't know (inferred); 98=refusal (inferred); 99=not stated (inferred)
+UHW_16GR,ordinal predictor,"1, 2, 3, 4, 6, 9","6, 7, 8, 9",,,6=off-path/structural (inferred); 7=don't know (inferred); 8=refusal (inferred); 9=not stated (inferred)
+UCA_10,nominal predictor,"1, 2, 6, 9","6, 7, 8, 9",,,6=off-path/structural (inferred); 7=don't know (inferred); 8=refusal (inferred); 9=not stated (inferred)
+FWA_134,binary predictor,"1, 2, 6, 9","6, 7, 8, 9",2,1,6=off-path/structural (inferred); 7=don't know (inferred); 8=refusal (inferred); 9=not stated (inferred)
+FWA_137,binary predictor,"1, 2, 6, 9","6, 7, 8, 9",2,1,6=off-path/structural (inferred); 7=don't know (inferred); 8=refusal (inferred); 9=not stated (inferred)
+APR_10,binary predictor,"1, 2, 6, 9","6, 7, 8, 9",2,1,6=off-path/structural (inferred); 7=don't know (inferred); 8=refusal (inferred); 9=not stated (inferred)
+APR_20,binary predictor,"1, 2, 6, 9","6, 7, 8, 9",2,1,6=off-path/structural (inferred); 7=don't know (inferred); 8=refusal (inferred); 9=not stated (inferred)
+APR_30,binary predictor,"1, 2, 6, 9","6, 7, 8, 9",2,1,6=off-path/structural (inferred); 7=don't know (inferred); 8=refusal (inferred); 9=not stated (inferred)
+APR_40,binary predictor,"1, 2, 6, 9","6, 7, 8, 9",2,1,6=off-path/structural (inferred); 7=don't know (inferred); 8=refusal (inferred); 9=not stated (inferred)
+APR_50,binary predictor,"1, 2, 6, 9","6, 7, 8, 9",2,1,6=off-path/structural (inferred); 7=don't know (inferred); 8=refusal (inferred); 9=not stated (inferred)
+APR_60,binary predictor,"1, 2, 6, 9","6, 7, 8, 9",2,1,6=off-path/structural (inferred); 7=don't know (inferred); 8=refusal (inferred); 9=not stated (inferred)
+APR_70,binary predictor,"1, 2, 6, 9","6, 7, 8, 9",2,1,6=off-path/structural (inferred); 7=don't know (inferred); 8=refusal (inferred); 9=not stated (inferred)
+APR_80,binary predictor,"1, 2, 6, 9","6, 7, 8, 9",2,1,6=off-path/structural (inferred); 7=don't know (inferred); 8=refusal (inferred); 9=not stated (inferred)
+ARV_10,binary predictor,"1, 2, 6, 9","6, 7, 8, 9",2,1,6=off-path/structural (inferred); 7=don't know (inferred); 8=refusal (inferred); 9=not stated (inferred)
+ARX_10,binary predictor,"1, 2, 6, 9","6, 7, 8, 9",2,1,6=off-path/structural (inferred); 7=don't know (inferred); 8=refusal (inferred); 9=not stated (inferred)
+TTLINCG1,ordinal predictor,"1, 2, 3, 4, 5, 6, 7","96, 97, 98, 99",,,96=off-path/structural (inferred); 97=don't know (inferred); 98=refusal (inferred); 99=not stated (inferred)
+FAMINCG1,ordinal predictor,"1, 2, 3, 4, 5, 6, 7, 8","96, 97, 98, 99",,,96=off-path/structural (inferred); 97=don't know (inferred); 98=refusal (inferred); 99=not stated (inferred)
+CHC_100,binary predictor,"1, 2, 9","6, 7, 8, 9",2,1,6=off-path/structural (inferred); 7=don't know (inferred); 8=refusal (inferred); 9=not stated (inferred)
+PRA_10GR,analytics-only,"1, 2, 3, 4, 5, 6, 7, 8, 9, 96, 99","96, 97, 98, 99",,,96=off-path/structural (inferred); 97=don't know (inferred); 98=refusal (inferred); 99=not stated (inferred)
+OAC_20,excluded,"1, 2, 6, 9",,,,No explicit reserve mapping in code.
+ARV_40,excluded,"1, 2, 6, 9",,,,No explicit reserve mapping in code.
+ARX_40,excluded,"1, 2, 6, 9",,,,No explicit reserve mapping in code.
+RES_10,excluded,"1, 2, 6, 9",,,,No explicit reserve mapping in code.
+ACD_80,excluded,"1, 2, 6, 9",,,,No explicit reserve mapping in code.
+ACD_90,excluded,"1, 2, 6, 9",,,,No explicit reserve mapping in code.
+CHC_110K,excluded,"1, 2, 6",,,,No explicit reserve mapping in code.
+CHC_110S,excluded,"1, 2, 6",,,,No explicit reserve mapping in code.
+ICS_40,excluded,"1, 2, 3, 4, 6, 9",,,,No explicit reserve mapping in code.
+FIS_10A,excluded,"1, 2, 6",,,,No explicit reserve mapping in code.
+FIS_10H,excluded,"1, 2, 6",,,,No explicit reserve mapping in code.
