@@ -10,7 +10,8 @@
       "Bash(python -c \":*)",
       "Bash(.venv/Scripts/python.exe -c \"import streamlit; import plotly; print\\(''streamlit'', streamlit.__version__\\); print\\(''plotly'', plotly.__version__\\)\")",
       "Bash(.venv/Scripts/pip.exe install:*)",
-      "Bash(.venv/Scripts/pip.exe freeze:*)"
+      "Bash(.venv/Scripts/pip.exe freeze:*)",
+      "Bash(python src/report.py)"
     ]
   }
 }

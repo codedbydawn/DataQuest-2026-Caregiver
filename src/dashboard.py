@@ -11,9 +11,6 @@ Purpose:
 
 How to run:
     streamlit run src/dashboard.py
-
-Requirements (install if missing):
-    pip install streamlit plotly shap xgboost scikit-learn pyreadstat
 """
 
 import os
@@ -31,13 +28,8 @@ import plotly.graph_objects as go
 import pyreadstat
 import shap
 import streamlit as st
-from sklearn.cluster import KMeans
-from sklearn.metrics import (
-    classification_report, roc_auc_score, roc_curve,
-    silhouette_score,
-)
+from sklearn.metrics import classification_report, roc_auc_score, roc_curve
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
 
 
@@ -54,16 +46,18 @@ VAR_CSV     = os.path.join(CB_DIR, "codebook_variables.csv")
 # =============================================================================
 # CONSTANTS
 # =============================================================================
-# Reserve codes treated as NaN throughout the pipeline.
-# Valid skip  (not applicable): 6, 96, 996, 9996, 99996, 999996
-# Not stated  (missing/refused): 9, 99, 999, 9999, 99999, 999999
+# These are the special "reserve" codes Statistics Canada uses in the survey.
+# They mean the question was not applicable (Valid skip) or the person didn't
+# answer (Not stated). We treat them all as missing values (NaN).
 RESERVE_CODES = [
     6, 9, 96, 99, 996, 999,
     9996, 9999, 99996, 99999, 999996, 999999,
 ]
 
-# 12 validated burnout items (ICS_40 = overall strain; FIS_10A-H = family impact;
-# CRH_10/20/30 = caregiver relationship health). All are 1-digit Yes/No.
+# The 12 survey questions that together measure caregiver burnout:
+#   ICS_40       — How stressful is your caregiving overall?
+#   FIS_10A–H    — Has caregiving affected your family life in these ways?
+#   CRH_10/20/30 — Has caregiving affected your personal relationships?
 BURNOUT_ITEMS = [
     "ICS_40",
     "FIS_10A", "FIS_10B", "FIS_10C", "FIS_10D",
@@ -71,13 +65,14 @@ BURNOUT_ITEMS = [
     "CRH_10", "CRH_20", "CRH_30",
 ]
 
-# FWA / ITE variable lists for composite scores
+# Workplace flexibility items used to build the composite flexibility score
 FWA_POS = ["FWA_132", "FWA_133", "FWA_134", "FWA_136", "FWA_137"]
 FWA_NEG = ["FWA_150"]
+# Work-enabling circumstances items used to build the ITE composite score
 ITE_POS = ["ITE_30A", "ITE_30B", "ITE_30C", "ITE_30D", "ITE_30E"]
 ITE_NEG = ["ITE_10"]
 
-# All predictor variables (matches pipeline.py INCLUDE_VARS)
+# All predictor columns included in the model (from Include Variables spec)
 INCLUDE_VARS = [
     "WGHT_PER",
     "SEX", "MARSTAT", "PHSDFLG", "AGEPRGR0", "SENFLAG",
@@ -117,7 +112,8 @@ INCLUDE_VARS = [
     "flexibility_score", "ite_score",
 ]
 
-# Reserve-code labels to drop from the display label map
+# Answer labels from the codebook that represent missing / not-applicable —
+# we exclude these from the display label map since they become NaN in the data
 _RESERVE_LABELS = {"Valid skip", "Don't know", "Refusal", "Not stated"}
 
 
@@ -136,21 +132,23 @@ st.set_page_config(
 # CACHED DATA LOADING
 # =============================================================================
 
-@st.cache_data(show_spinner="Loading codebook answer labels…")
+@st.cache_data(show_spinner="Loading answer labels from codebook…")
 def load_label_map():
     """
-    Build {variable_name: {numeric_code: human_label}} from codebook_answer_categories.csv.
+    Reads the codebook answer-categories file and builds a lookup table:
+        { variable_code: { numeric_answer: human_readable_label } }
 
-    The codebook contains one row per answer option for each variable.
+    For example:
+        label_map["SEX"][1]  →  "Male"
+        label_map["PRV"][35] →  "Ontario"
+
     Reserve-code rows (Valid skip, Don't know, Refusal, Not stated) are
-    excluded because those values are treated as NaN in the analysis.
+    excluded because those values become NaN in the cleaned data.
 
-    PDF-extraction artifact: "Y es" is normalised to "Yes".
+    "Y es" is a known PDF-extraction artefact and is corrected to "Yes".
     """
     cats = pd.read_csv(ANSWER_CATS)
-    # Normalise PDF extraction artifacts (e.g. "Y es" → "Yes")
     cats["label"] = cats["label"].str.strip().str.replace(r"^Y\s+es$", "Yes", regex=True)
-    # Drop reserve-code rows — they won't appear in the cleaned data
     cats = cats[~cats["label"].isin(_RESERVE_LABELS)]
 
     label_map: dict[str, dict[int, str]] = {}
@@ -159,7 +157,7 @@ def load_label_map():
         try:
             code = int(float(row["code"]))
         except (ValueError, TypeError):
-            continue  # skip range codes like "00 - 84"
+            continue   # skip range-style codes like "00 - 84"
         label_map.setdefault(var, {})[code] = str(row["label"])
     return label_map
 
@@ -167,205 +165,173 @@ def load_label_map():
 @st.cache_data(show_spinner="Loading variable descriptions…")
 def load_var_info():
     """
-    Build {variable_name: short_description} from the codebook variables CSV.
-    Prefers the 'concept' field; falls back to the first 80 chars of question_text.
+    Returns a dict mapping variable codes to plain-English descriptions:
+        { "SEX": "Sex of respondent",
+          "PRV": "Province / territory of residence", ... }
+
+    Used to replace raw column names with readable titles in all charts.
     """
     df = pd.read_csv(VAR_CSV, usecols=["variable_name", "concept", "question_text"])
     result = {}
     for _, row in df.iterrows():
-        label = row["concept"]
-        if pd.isna(label) or str(label).strip() == "":
-            label = str(row["question_text"])[:80] if pd.notna(row["question_text"]) else row["variable_name"]
-        result[row["variable_name"]] = str(label).strip()
+        desc = row["concept"]
+        if pd.isna(desc) or str(desc).strip() == "":
+            desc = str(row["question_text"])[:80] if pd.notna(row["question_text"]) else row["variable_name"]
+        result[row["variable_name"]] = str(desc).strip()
+    # Add readable names for the two composite scores (not in codebook)
+    result["flexibility_score"] = "Workplace Flexibility Score"
+    result["ite_score"]         = "Work-Enabling Circumstances Score"
     return result
 
 
-@st.cache_data(show_spinner="Loading and processing survey data (first run only — takes ~30 s)…")
+@st.cache_data(show_spinner="Loading and processing survey data (first run only — ~30 s)…")
 def load_and_process():
     """
-    Full pipeline:
-      1. Load SAS PUMF file
-      2. Drop WTBS_ bootstrap weight columns
-      3. Build flexibility_score and ite_score composite columns
-      4. Build Include Variables dataframe with reserve codes → NaN
-      5. Compute burnout target (12-item mean, median split → binary)
-      6. Return X, y_clf, y_reg, W (survey weight), and the full analysis dataframe
-
-    Returns a dict with keys:
-        X             – feature matrix (DataFrame)
-        y_clf         – binary burnout label (Series, 0/1)
-        y_reg         – continuous burnout score (Series, 0–1)
-        W             – WGHT_PER survey weights (Series)
-        include_df    – aligned include-vars DataFrame (includes WGHT_PER)
-        burnout_score – same as y_reg
-        median_cutoff – threshold used for binary split
+    Runs the full data pipeline:
+      1. Load the SAS public-use microdata file
+      2. Drop the 500+ bootstrap weight columns (not needed for modelling)
+      3. Build two composite scores from the FWA and ITE survey questions
+      4. Assemble the final predictor table; replace all reserve codes with NaN
+      5. Compute the burnout target from 12 validated survey items
+      6. Separate predictors (X), burnout label (y), and survey weight (W)
     """
     main, _ = pyreadstat.read_sas7bdat(SAS_FILE)
 
-    # ── Step 1: Drop replicate bootstrap weights ──────────────────────────
+    # Drop bootstrap weight columns
     main_clean = main.drop(columns=[c for c in main.columns if c.startswith("WTBS_")])
 
-    # ── Step 2: Composite scores ──────────────────────────────────────────
-    # All FWA/ITE items are 1-digit binary (1=Yes, 2=No).
-    # Recode Yes→1, No→0, reserve codes→NaN before summing.
+    # --- Composite score 1: Workplace Flexibility (-1 to 5) ------------------
+    # Positive items: respondent CAN do this (Yes=1, No=0)
+    #   FWA_132 — Can work from home
+    #   FWA_133 — Can vary start/end time
+    #   FWA_134 — Can take time off during the day (and make it up later)
+    #   FWA_136 — Can temporarily reduce hours
+    #   FWA_137 — Has other flexible work arrangements
+    # Negative item (subtracts 1 if true):
+    #   FWA_150 — Using flexibility hurts career advancement
     scores_base = main_clean.copy()
     for col in FWA_POS + FWA_NEG + ITE_POS + ITE_NEG:
         if col in scores_base.columns:
             scores_base[col] = scores_base[col].replace(RESERVE_CODES, np.nan)
             scores_base[col] = scores_base[col].map({1: 1, 2: 0})
 
-    # flexibility_score (-1 to 5): work-flexibility options minus career-penalty flag
     scores_base["flexibility_score"] = (
         scores_base[FWA_POS].sum(axis=1, min_count=1)
         - scores_base[FWA_NEG[0]].fillna(0)
     )
-    # ite_score (-1 to 5): enabling circumstances minus already-had-to-quit flag
+
+    # --- Composite score 2: Work-Enabling Circumstances (-1 to 5) ------------
+    # Positive items: this circumstance WOULD help the respondent stay employed
+    #   ITE_30A — Flexible scheduling
+    #   ITE_30B — Option to work from home
+    #   ITE_30C — Reduced hours with no pay penalty
+    #   ITE_30D — Access to eldercare near workplace
+    #   ITE_30E — Other support at work
+    # Negative item (subtracts 1 if true):
+    #   ITE_10  — Already had to quit or reduce hours because of caregiving
     scores_base["ite_score"] = (
         scores_base[ITE_POS].sum(axis=1, min_count=1)
         - scores_base[ITE_NEG[0]].fillna(0)
     )
 
-    # ── Step 3: Include Variables dataframe ───────────────────────────────
-    available = [c for c in INCLUDE_VARS if c in scores_base.columns]
+    # --- Build predictor table ------------------------------------------------
+    available  = [c for c in INCLUDE_VARS if c in scores_base.columns]
     include_df = scores_base[available].copy()
-    non_composite = [
-        c for c in available
-        if c not in ("flexibility_score", "ite_score", "WGHT_PER")
-    ]
-    for col in non_composite:
-        include_df[col] = include_df[col].replace(RESERVE_CODES, np.nan)
+    for col in available:
+        if col not in ("flexibility_score", "ite_score", "WGHT_PER"):
+            include_df[col] = include_df[col].replace(RESERVE_CODES, np.nan)
 
-    # ── Step 4: Burnout target ─────────────────────────────────────────────
-    # Mean of 12 burnout items (after replacing reserve codes with NaN).
-    # Higher score = more burnout (scale 1–4 for ICS_40; binary for FIS/CRH).
-    # Median-split creates balanced 0/1 classes.
-    burnout_base = main_clean[BURNOUT_ITEMS].replace(RESERVE_CODES, np.nan)
-    burnout_score_full = burnout_base.mean(axis=1)
-    median_cutoff = burnout_score_full.median()
-    burnout_high_full = (burnout_score_full >= median_cutoff).astype(int)
+    # --- Burnout target -------------------------------------------------------
+    # Recode all 12 burnout items to a 0-1 scale where 1.0 = maximum strain:
+    #   Binary items (FIS_10*, CRH_*): 1(Yes/strain) -> 1.0,  2(No) -> 0.0
+    #   ICS_40 (4-point):  1(Very stressful) -> 1.0,  2 -> 0.667,  3 -> 0.333,  4(Not at all) -> 0.0
+    # Then average across answered items; higher = more burnout.
+    burnout_raw = main_clean[BURNOUT_ITEMS].replace(RESERVE_CODES, np.nan)
+    for col in BURNOUT_ITEMS:
+        if col not in burnout_raw.columns:
+            continue
+        if col == "ICS_40":
+            burnout_raw[col] = burnout_raw[col].map({1: 1.0, 2: 2/3, 3: 1/3, 4: 0.0})
+        else:
+            burnout_raw[col] = burnout_raw[col].map({1: 1.0, 2: 0.0})
+    burnout_score = burnout_raw.mean(axis=1)
+    median_cutoff = burnout_score.median()
+    burnout_high  = (burnout_score >= median_cutoff).astype(int)
 
-    valid_idx = burnout_score_full.dropna().index
+    valid_idx       = burnout_score.dropna().index
     include_aligned = include_df.loc[valid_idx].copy()
-    y_score = burnout_score_full.loc[valid_idx]
-    y_clf = burnout_high_full.loc[valid_idx]
+    y_score         = burnout_score.loc[valid_idx]
+    y_clf           = burnout_high.loc[valid_idx]
 
-    # ── Step 5: X / W separation ──────────────────────────────────────────
-    EXCLUDE_FROM_X = ["WGHT_PER"] + [c for c in BURNOUT_ITEMS if c in include_aligned.columns]
-    X = include_aligned.drop(columns=[c for c in EXCLUDE_FROM_X if c in include_aligned.columns])
-    W = include_aligned["WGHT_PER"] if "WGHT_PER" in include_aligned.columns else pd.Series(
-        np.ones(len(include_aligned)), index=include_aligned.index
-    )
+    exclude_x = ["WGHT_PER"] + [c for c in BURNOUT_ITEMS if c in include_aligned.columns]
+    X = include_aligned.drop(columns=[c for c in exclude_x if c in include_aligned.columns])
+    W = include_aligned.get("WGHT_PER", pd.Series(np.ones(len(include_aligned)),
+                                                    index=include_aligned.index))
 
-    return {
-        "X": X,
-        "y_clf": y_clf,
-        "y_reg": y_score,
-        "W": W,
-        "include_df": include_aligned,
-        "burnout_score": y_score,
-        "median_cutoff": median_cutoff,
-    }
+    return dict(X=X, y_clf=y_clf, y_reg=y_score, W=W,
+                include_df=include_aligned, burnout_score=y_score,
+                median_cutoff=median_cutoff)
 
 
-@st.cache_resource(show_spinner="Training XGBoost model (first run only — ~1 min)…")
+@st.cache_resource(show_spinner="Training burnout prediction model (first run only — ~1 min)…")
 def train_model():
     """
-    Train the XGBoost burnout classifier and return model + evaluation metrics.
+    Trains an XGBoost gradient-boosted tree classifier to predict high vs
+    low burnout risk.  Survey weights are passed as sample_weight so the
+    model accounts for the complex survey design.
 
-    Uses survey weights (WGHT_PER) as sample_weight so the model respects
-    the complex survey design.
+    XGBoost handles missing values natively — no imputation needed.
 
-    XGBoost handles NaN natively — no imputation required.
-
-    Returns: (model, auc, fpr, tpr, report_dict, X_test, y_test, y_prob)
+    Returns the trained model plus evaluation results (AUC, ROC curve,
+    precision/recall report).
     """
     data = load_and_process()
     X, y_clf, W = data["X"], data["y_clf"], data["W"]
 
-    # ── XGBoost configuration ─────────────────────────────────────────────
     XGB_CONFIG = dict(
-        n_estimators          = 500,
-        max_depth             = 6,
-        learning_rate         = 0.05,
-        subsample             = 0.8,
-        colsample_bytree      = 0.8,
-        min_child_weight      = 10,
-        scale_pos_weight      = 1,
-        eval_metric           = "logloss",
-        early_stopping_rounds = 30,
-        random_state          = 42,
-        n_jobs                = -1,
+        n_estimators=500, max_depth=6, learning_rate=0.05,
+        subsample=0.8, colsample_bytree=0.8, min_child_weight=10,
+        scale_pos_weight=1, eval_metric="logloss",
+        early_stopping_rounds=30, random_state=42, n_jobs=-1,
     )
 
-    X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(
-        X, y_clf, W.values,
-        test_size=0.20, random_state=42, stratify=y_clf,
+    X_train, X_test, y_train, y_test, w_train, _ = train_test_split(
+        X, y_clf, W.values, test_size=0.20, random_state=42, stratify=y_clf,
     )
 
     model = XGBClassifier(**XGB_CONFIG)
-    model.fit(
-        X_train, y_train,
-        sample_weight=w_train,
-        eval_set=[(X_test, y_test)],
-        verbose=False,
-    )
+    model.fit(X_train, y_train, sample_weight=w_train,
+              eval_set=[(X_test, y_test)], verbose=False)
 
     y_pred = model.predict(X_test)
     y_prob = model.predict_proba(X_test)[:, 1]
-    auc = roc_auc_score(y_test, y_prob)
+    auc    = roc_auc_score(y_test, y_prob)
     fpr, tpr, _ = roc_curve(y_test, y_prob)
     report = classification_report(
         y_test, y_pred,
         target_names=["Low Burnout", "High Burnout"],
         output_dict=True,
     )
-
     return model, auc, fpr, tpr, report, X_test, y_test, y_prob
 
 
-@st.cache_data(show_spinner="Computing SHAP values for all respondents (this may take 1–2 min)…")
+@st.cache_data(show_spinner="Computing SHAP values for all respondents (1–2 min)…")
 def get_shap_values():
     """
-    Compute SHAP values for every respondent in X (not just the test set).
-    This gives each person a risk-driver profile used for clustering.
+    Calculates a SHAP (SHapley Additive exPlanation) value for every
+    respondent and every feature.
 
-    Returns shap_df: DataFrame (n_respondents × n_features).
+    A positive SHAP value means the feature pushed that person's predicted
+    burnout risk HIGHER.  A negative value means it pushed it LOWER.
+
+    Returns a DataFrame (one row per respondent, one column per feature).
     """
-    data = load_and_process()
-    X = data["X"]
+    data  = load_and_process()
+    X     = data["X"]
     model, *_ = train_model()
-    explainer = shap.TreeExplainer(model)
-    shap_arr = explainer.shap_values(X)
-    return pd.DataFrame(shap_arr, index=X.index, columns=X.columns)
-
-
-@st.cache_data(show_spinner="Clustering respondents by risk-driver pattern…")
-def get_clusters():
-    """
-    K-Means clustering on the SHAP value matrix (StandardScaler applied first).
-    Auto-selects k (2–8) using silhouette score.
-
-    Returns: (cluster_labels array, best_k, k_list, silhouette_scores)
-    """
-    shap_df = get_shap_values()
-    K_RANGE = range(2, 9)
-
-    scaler = StandardScaler()
-    shap_scaled = scaler.fit_transform(shap_df)
-
-    silhouettes = []
-    for k in K_RANGE:
-        km = KMeans(n_clusters=k, random_state=42, n_init=10)
-        labels = km.fit_predict(shap_scaled)
-        silhouettes.append(
-            silhouette_score(shap_scaled, labels, sample_size=2000, random_state=42)
-        )
-
-    best_k = K_RANGE.start + int(np.argmax(silhouettes))
-    km_final = KMeans(n_clusters=best_k, random_state=42, n_init=20)
-    cluster_labels = km_final.fit_predict(shap_scaled)
-
-    return cluster_labels, best_k, list(K_RANGE), silhouettes
+    explainer   = shap.TreeExplainer(model)
+    shap_values = explainer.shap_values(X)
+    return pd.DataFrame(shap_values, index=X.index, columns=X.columns)
 
 
 # =============================================================================
@@ -373,28 +339,26 @@ def get_clusters():
 # =============================================================================
 
 def decode_col(series: pd.Series, label_map: dict, var_name: str) -> pd.Series:
-    """
-    Translate a numeric-coded Series to its human-readable labels.
-    Values not in the label map are left as-is. NaN stays NaN.
-    """
+    """Translate numeric survey codes to their human-readable answer labels."""
     mapping = label_map.get(var_name, {})
     if not mapping:
         return series
-    def _decode(x):
+    def _f(x):
         if pd.isna(x):
             return np.nan
         try:
             return mapping.get(int(x), x)
         except (ValueError, TypeError):
             return x
-    return series.map(_decode)
+    return series.map(_f)
 
 
 def burnout_rate_chart(df: pd.DataFrame, var: str, label_map: dict,
                        var_info: dict, title: str = None) -> go.Figure:
     """
-    Horizontal bar chart: high-burnout rate (%) for each category of `var`.
-    Bars are coloured on a red-green scale (higher = more red).
+    Horizontal bar chart showing the percentage of high-burnout respondents
+    within each category of the chosen variable.
+    Bars are colour-coded from green (low) to red (high).
     """
     tmp = df[[var, "burnout_high"]].dropna().copy()
     tmp["_label"] = decode_col(tmp[var], label_map, var)
@@ -402,18 +366,18 @@ def burnout_rate_chart(df: pd.DataFrame, var: str, label_map: dict,
 
     stats = (
         tmp.groupby("_label")["burnout_high"]
-        .agg(burnout_rate="mean", count="count")
+        .agg(rate="mean", count="count")
         .reset_index()
     )
-    stats["pct"] = (stats["burnout_rate"] * 100).round(1)
+    stats["pct"] = (stats["rate"] * 100).round(1)
     stats = stats.sort_values("pct")
 
-    var_label = var_info.get(var, var)
+    readable_title = title or f"High Burnout Rate by {var_info.get(var, var)}"
     fig = px.bar(
         stats, x="pct", y="_label", orientation="h",
         text="pct",
-        labels={"pct": "High Burnout Rate (%)", "_label": ""},
-        title=title or f"High Burnout Rate by {var_label}",
+        labels={"pct": "% with High Burnout Risk", "_label": ""},
+        title=readable_title,
         color="pct",
         color_continuous_scale="RdYlGn_r",
         range_color=[0, 100],
@@ -422,13 +386,13 @@ def burnout_rate_chart(df: pd.DataFrame, var: str, label_map: dict,
     fig.update_layout(
         coloraxis_showscale=False,
         height=max(280, len(stats) * 36 + 80),
-        margin=dict(l=10, r=40, t=50, b=30),
+        margin=dict(l=10, r=50, t=50, b=30),
     )
     return fig
 
 
 # =============================================================================
-# LOAD DATA + CODEBOOK (runs once; cached thereafter)
+# LOAD DATA (runs once; cached for the rest of the session)
 # =============================================================================
 label_map = load_label_map()
 var_info  = load_var_info()
@@ -438,15 +402,20 @@ X             = data["X"]
 y_clf         = data["y_clf"]
 y_reg         = data["y_reg"]
 W             = data["W"]
-include_df    = data["include_df"]
 burnout_score = data["burnout_score"]
 median_cutoff = data["median_cutoff"]
 
-# Build the main analysis dataframe used throughout the dashboard
+# Main analysis table used throughout the dashboard
 analysis_df = X.copy()
 analysis_df["burnout_high"]  = y_clf
 analysis_df["burnout_score"] = y_reg
 analysis_df["WGHT_PER"]      = W
+
+# Human-readable names for every feature column (used in SHAP plots)
+feat_display_names = [
+    var_info.get(c, c)[:45] + ("…" if len(var_info.get(c, c)) > 45 else "")
+    for c in X.columns
+]
 
 
 # =============================================================================
@@ -455,10 +424,11 @@ analysis_df["WGHT_PER"]      = W
 st.sidebar.title("🧡 Caregiver Burnout Risk")
 st.sidebar.markdown("**GSS 2018 — Statistics Canada**")
 st.sidebar.divider()
-st.sidebar.markdown("### Filter Population")
-st.sidebar.markdown("Use these filters to zoom into a specific group.")
+st.sidebar.markdown("### Filter the Population")
+st.sidebar.markdown(
+    "Narrow down to a specific group to see how burnout risk looks for them."
+)
 
-# Variables available as filters (must be categorical & present in analysis_df)
 FILTER_VARS = {
     "SEX":      "Sex",
     "PRV":      "Province / Territory",
@@ -478,7 +448,6 @@ for col, display_name in FILTER_VARS.items():
     if choice != "All":
         active_filters[col] = raw_codes[labels.index(choice)]
 
-# Apply filters
 filter_mask = pd.Series(True, index=analysis_df.index)
 for col, code in active_filters.items():
     filter_mask &= (analysis_df[col] == code)
@@ -487,31 +456,31 @@ filtered_df = analysis_df[filter_mask]
 if active_filters:
     st.sidebar.success(f"{filter_mask.sum():,} respondents match your filters.")
 else:
-    st.sidebar.info(f"{len(analysis_df):,} respondents (no filters applied).")
+    st.sidebar.info(f"Showing all {len(analysis_df):,} respondents.")
 
 st.sidebar.divider()
-st.sidebar.caption(
-    "Data: [GSS 2018 Caregiving PUMF](https://www150.statcan.gc.ca/)  \n"
-    "Statistics Canada, Cycle 32"
-)
+st.sidebar.caption("Data: Statistics Canada, GSS Cycle 32, 2018")
 
 
 # =============================================================================
-# MAIN TITLE
+# PAGE HEADER
 # =============================================================================
 st.title("🧡 Caregiver Burnout Risk Screener")
 st.markdown(
-    "*Identifying at-risk caregivers to guide government and nonprofit resource allocation*"
+    "*Helping government agencies and nonprofits identify the caregivers most at "
+    "risk for burnout — and understand what's driving that risk — so resources "
+    "can be directed where they're needed most.*"
 )
+
 
 # =============================================================================
 # TABS
 # =============================================================================
-tab_overview, tab_drivers, tab_segments, tab_explore = st.tabs([
+tab_overview, tab_diag, tab_drivers, tab_explore = st.tabs([
     "📊 Overview",
-    "📈 Risk Drivers",
-    "🧩 Caregiver Segments",
-    "🔬 Variable Explorer",
+    "🔍 Data Diagnostics",
+    "📈 What Drives Burnout Risk",
+    "🔬 Explore Any Variable",
 ])
 
 
@@ -519,108 +488,122 @@ tab_overview, tab_drivers, tab_segments, tab_explore = st.tabs([
 # TAB 1 — OVERVIEW
 # ══════════════════════════════════════════════════════════════════════════════
 with tab_overview:
-    n_total   = len(filtered_df)
-    n_high    = int(filtered_df["burnout_high"].sum())
-    pct_high  = n_high / n_total * 100 if n_total > 0 else 0.0
+    n_total  = len(filtered_df)
+    n_high   = int(filtered_df["burnout_high"].sum())
+    pct_high = n_high / n_total * 100 if n_total > 0 else 0.0
     avg_score = filtered_df["burnout_score"].mean()
 
-    # KPI metrics
+    # --- Top-line numbers ---
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Respondents (filtered)", f"{n_total:,}")
+    c1.metric("Respondents in View", f"{n_total:,}")
     c2.metric(
-        "High Burnout Risk",
+        "Flagged High Burnout Risk",
         f"{pct_high:.1f}%",
         f"{n_high:,} people",
+        help="Respondents whose average score across 12 burnout questions "
+             "is at or above the overall median.",
     )
     c3.metric(
-        "Avg Burnout Score",
+        "Average Burnout Score",
         f"{avg_score:.3f}",
-        f"median threshold: {median_cutoff:.3f}",
+        f"Split threshold: {median_cutoff:.3f}",
+        help="Mean of 12 burnout survey items (0–4 scale). "
+             "Respondents at or above the overall median are labelled High Risk.",
     )
     if "flexibility_score" in filtered_df.columns:
         avg_flex = filtered_df["flexibility_score"].mean()
-        c4.metric("Avg Flexibility Score", f"{avg_flex:.2f}", "(range −1 to 5)")
+        c4.metric(
+            "Average Workplace Flexibility",
+            f"{avg_flex:.2f}",
+            "Scale: −1 (no flexibility, career penalty) to +5 (maximum flexibility)",
+        )
 
     st.divider()
 
-    # Row 1: Province + Sex
+    # --- Row 1: Province and Sex ---
     col_a, col_b = st.columns(2)
     with col_a:
         if "PRV" in filtered_df.columns:
             st.plotly_chart(
                 burnout_rate_chart(filtered_df, "PRV", label_map, var_info,
-                                   "High Burnout Rate by Province"),
-                use_container_width=True,
+                                   "High Burnout Rate by Province or Territory"),
+                width="stretch",
             )
     with col_b:
         if "SEX" in filtered_df.columns:
             st.plotly_chart(
                 burnout_rate_chart(filtered_df, "SEX", label_map, var_info,
                                    "High Burnout Rate by Sex"),
-                use_container_width=True,
+                width="stretch",
             )
 
-    # Row 2: Score distribution + Marital status
+    # --- Row 2: Score distribution and Marital status ---
     col_c, col_d = st.columns(2)
     with col_c:
         fig_hist = px.histogram(
             filtered_df, x="burnout_score", nbins=30,
-            title="Burnout Score Distribution",
-            labels={"burnout_score": "Mean burnout score (12 items)", "count": "Respondents"},
+            title="Distribution of Burnout Scores",
+            labels={
+                "burnout_score": "Burnout Score (average of 12 survey items)",
+                "count": "Number of Respondents",
+            },
             color_discrete_sequence=["#e07b54"],
         )
         fig_hist.add_vline(
             x=median_cutoff, line_dash="dash", line_color="red",
-            annotation_text=f"Median split: {median_cutoff:.2f}",
+            annotation_text=f"High / Low split point: {median_cutoff:.2f}",
             annotation_position="top right",
         )
         fig_hist.update_layout(margin=dict(t=50))
-        st.plotly_chart(fig_hist, use_container_width=True)
+        st.plotly_chart(fig_hist, width="stretch")
 
     with col_d:
         if "MARSTAT" in filtered_df.columns:
             st.plotly_chart(
                 burnout_rate_chart(filtered_df, "MARSTAT", label_map, var_info,
                                    "High Burnout Rate by Marital Status"),
-                use_container_width=True,
+                width="stretch",
             )
 
-    # Row 3: Income + Visible minority
+    # --- Row 3: Income and Visible minority ---
     col_e, col_f = st.columns(2)
     with col_e:
         if "FAMINCG1" in filtered_df.columns:
             st.plotly_chart(
                 burnout_rate_chart(filtered_df, "FAMINCG1", label_map, var_info,
                                    "High Burnout Rate by Household Income"),
-                use_container_width=True,
+                width="stretch",
             )
     with col_f:
         if "VISMIN" in filtered_df.columns:
             st.plotly_chart(
                 burnout_rate_chart(filtered_df, "VISMIN", label_map, var_info,
                                    "High Burnout Rate by Visible Minority Status"),
-                use_container_width=True,
+                width="stretch",
             )
 
-    # Composite scores vs burnout
+    # --- Composite scores ---
     st.divider()
-    st.subheader("Composite Scores vs Burnout Risk")
+    st.subheader("Do Workplace Conditions Affect Burnout Risk?")
+    st.markdown(
+        "These two composite scores summarise workplace flexibility and access "
+        "to enabling work conditions. Lower scores mean fewer supports in place."
+    )
+
     col_g, col_h = st.columns(2)
 
-    def _score_bar(df, score_col, xlabel, title):
-        tmp = df[[score_col, "burnout_high"]].dropna()
+    def _score_bar(df, col, xlabel, title):
+        tmp = df[[col, "burnout_high"]].dropna()
         stats = (
-            tmp.groupby(score_col)["burnout_high"]
-            .agg(pct="mean", count="count")
-            .reset_index()
+            tmp.groupby(col)["burnout_high"]
+            .agg(pct="mean", count="count").reset_index()
         )
         stats["pct"] = (stats["pct"] * 100).round(1)
         fig = px.bar(
-            stats, x=score_col, y="pct",
-            title=title,
-            labels={score_col: xlabel, "pct": "High Burnout Rate (%)"},
-            color="pct", color_continuous_scale="RdYlGn_r", range_color=[0, 100],
-            text="pct",
+            stats, x=col, y="pct", title=title,
+            labels={col: xlabel, "pct": "% with High Burnout Risk"},
+            color="pct", color_continuous_scale="RdYlGn_r",
+            range_color=[0, 100], text="pct",
         )
         fig.update_traces(texttemplate="%{text:.1f}%", textposition="outside")
         fig.update_layout(coloraxis_showscale=False, yaxis_range=[0, 105])
@@ -630,47 +613,493 @@ with tab_overview:
         if "flexibility_score" in filtered_df.columns:
             st.plotly_chart(
                 _score_bar(filtered_df, "flexibility_score",
-                           "Flexibility Score (−1 to 5)",
-                           "High Burnout Rate by Workplace Flexibility Score"),
-                use_container_width=True,
+                           "Flexibility Score (−1 = none, +5 = maximum)",
+                           "Burnout Risk by Workplace Flexibility Score"),
+                width="stretch",
             )
     with col_h:
         if "ite_score" in filtered_df.columns:
             st.plotly_chart(
                 _score_bar(filtered_df, "ite_score",
-                           "ITE Score (−1 to 5)",
-                           "High Burnout Rate by Enabling-to-Work Score"),
-                use_container_width=True,
+                           "Work-Enabling Score (−1 = none, +5 = maximum)",
+                           "Burnout Risk by Work-Enabling Circumstances Score"),
+                width="stretch",
             )
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# TAB 2 — RISK DRIVERS (MODEL + SHAP)
+# TAB 2 — DATA DIAGNOSTICS
+# ══════════════════════════════════════════════════════════════════════════════
+with tab_diag:
+    st.subheader("Data Diagnostics — A Look at the Data Before Modelling")
+    st.markdown(
+        "This section explores the raw survey data to give a sense of who the "
+        "caregivers are, how much they are doing, and which variables are most "
+        "connected to burnout — before the machine-learning model is involved."
+    )
+
+    # ── 1. Data completeness ────────────────────────────────────────────────
+    st.markdown("### 1. How Complete Is the Data?")
+    st.markdown(
+        "Many survey questions are only asked to specific groups "
+        "(e.g. only employed caregivers, only those providing personal care). "
+        "Variables with high missingness are typically module-specific — "
+        "most respondents skipped that section entirely."
+    )
+
+    missing_pct = (
+        analysis_df
+        .drop(columns=["burnout_high", "burnout_score", "WGHT_PER"], errors="ignore")
+        .isnull()
+        .mean() * 100
+    )
+    missing_pct = missing_pct[missing_pct > 0].sort_values(ascending=False).head(30)
+
+    if len(missing_pct) > 0:
+        miss_labels = [
+            var_info.get(c, c)[:40] + ("…" if len(var_info.get(c, c)) > 40 else "")
+            for c in missing_pct.index
+        ]
+        col_miss_a, col_miss_b = st.columns([3, 1])
+        with col_miss_a:
+            fig_miss = px.bar(
+                x=missing_pct.values[::-1],
+                y=miss_labels[::-1],
+                orientation="h",
+                title="Top 30 Variables by % Missing Values",
+                labels={"x": "% of Respondents with No Answer", "y": ""},
+                color=missing_pct.values[::-1],
+                color_continuous_scale="Reds",
+            )
+            fig_miss.update_layout(
+                coloraxis_showscale=False,
+                height=700,
+                margin=dict(l=10, r=30, t=50, b=20),
+            )
+            st.plotly_chart(fig_miss, width="stretch")
+        with col_miss_b:
+            st.markdown("**Summary**")
+            n_complete = (missing_pct == 0).sum()
+            n_partial  = (missing_pct.between(1, 50, inclusive="both")).sum()
+            n_sparse   = (missing_pct > 50).sum()
+            st.metric("Fully answered variables", f"{n_complete}")
+            st.metric("Partially answered (1–50% missing)", f"{n_partial}")
+            st.metric("Mostly skipped (>50% missing)", f"{n_sparse}")
+            st.caption(
+                "High missingness usually means the question was only shown to "
+                "a subset of respondents (module routing), not that people refused "
+                "to answer."
+            )
+
+    st.divider()
+
+    # ── 2. Correlation with burnout score ───────────────────────────────────
+    st.markdown("### 2. Which Variables Are Most Strongly Linked to Burnout?")
+    st.markdown(
+        "Pearson correlation between each predictor and the continuous burnout "
+        "score. A bar pointing **right (positive)** means higher values of that "
+        "variable go with higher burnout. A bar pointing **left (negative)** "
+        "means higher values are associated with *lower* burnout. "
+        "Note: correlation captures linear relationships only; the model picks up "
+        "non-linear patterns too."
+    )
+
+    numeric_x = analysis_df.select_dtypes(include=[np.number]).columns.tolist()
+    numeric_x = [c for c in numeric_x if c not in ("burnout_high", "WGHT_PER")]
+
+    corr_series = (
+        analysis_df[numeric_x]
+        .corrwith(analysis_df["burnout_score"])
+        .dropna()
+    )
+    top_corr = corr_series.abs().sort_values(ascending=False).head(25)
+    top_corr_signed = corr_series.loc[top_corr.index]
+
+    top_corr_labels = [
+        var_info.get(c, c)[:40] + ("…" if len(var_info.get(c, c)) > 40 else "")
+        for c in top_corr_signed.index
+    ]
+    bar_colors = ["#d73027" if v > 0 else "#1a9850" for v in top_corr_signed.values]
+
+    fig_corr = go.Figure(go.Bar(
+        x=top_corr_signed.values[::-1],
+        y=top_corr_labels[::-1],
+        orientation="h",
+        marker_color=bar_colors[::-1],
+        text=[f"{v:+.3f}" for v in top_corr_signed.values[::-1]],
+        textposition="outside",
+    ))
+    fig_corr.update_layout(
+        title="Top 25 Variables by Absolute Correlation with Burnout Score",
+        xaxis_title="Pearson Correlation with Burnout Score  "
+                    "(red = higher → more burnout, green = higher → less burnout)",
+        xaxis=dict(range=[-0.55, 0.55]),
+        height=600,
+        margin=dict(l=10, r=60, t=50, b=20),
+    )
+    st.plotly_chart(fig_corr, width="stretch")
+
+    st.divider()
+
+    # ── 3. Correlation heatmap (top features with each other) ───────────────
+    st.markdown("### 3. How Are the Top Risk Factors Related to Each Other?")
+    st.markdown(
+        "This heatmap shows how the 15 variables most correlated with burnout "
+        "relate to *each other*. Clusters of highly correlated variables "
+        "(dark red/blue squares) suggest they are measuring a similar underlying "
+        "concept and may reinforce each other."
+    )
+
+    heat_features = top_corr.head(15).index.tolist()
+    corr_matrix   = analysis_df[heat_features].corr()
+
+    # Build unique labels: truncate description, then append [CODE] if duplicate
+    raw_labels = [var_info.get(c, c)[:30] for c in heat_features]
+    heat_labels = []
+    for c, lbl in zip(heat_features, raw_labels):
+        if raw_labels.count(lbl) > 1:
+            heat_labels.append(f"{lbl[:24]}… [{c}]")
+        else:
+            heat_labels.append(lbl + ("…" if len(var_info.get(c, c)) > 30 else ""))
+
+    corr_matrix.index   = heat_labels
+    corr_matrix.columns = heat_labels
+
+    fig_heat = px.imshow(
+        corr_matrix,
+        color_continuous_scale="RdBu_r",
+        zmin=-1, zmax=1,
+        title="Correlation Matrix — Top 15 Burnout-Linked Variables",
+        text_auto=".2f",
+        aspect="auto",
+    )
+    fig_heat.update_layout(
+        height=560,
+        margin=dict(l=10, r=10, t=50, b=10),
+        coloraxis_colorbar_title="Pearson r",
+    )
+    st.plotly_chart(fig_heat, width="stretch")
+
+    st.divider()
+
+    # ── 4. Caregiver workload — how much are caregivers doing? ──────────────
+    st.markdown("### 4. How Overworked Are Caregivers?")
+    st.markdown(
+        "Each respondent can be helping their care receiver with multiple types "
+        "of activities simultaneously. The chart below shows how many *categories* "
+        "of activity each caregiver is responsible for, and what the burnout rate "
+        "looks like at each level."
+    )
+
+    # Activity gateway variables (Yes=1 means caregiver helps with this category)
+    ACTIVITY_GATEWAY = {
+        "ARO_10":  "House maintenance",
+        "ARP_10":  "Personal care",
+        "ARM_10":  "Medical treatments",
+        "ARS_10":  "Social / recreational activities",
+        "ARB_10":  "Behavioural support",
+        "ARV_10":  "Vision / hearing assistance",
+        "ARX_10":  "Other assistance",
+    }
+    avail_act = {k: v for k, v in ACTIVITY_GATEWAY.items() if k in analysis_df.columns}
+
+    # Count how many activity types each caregiver does (= 1 means Yes)
+    act_df = analysis_df[list(avail_act.keys())].copy()
+    activity_count = (act_df == 1).sum(axis=1)
+    analysis_df["activity_count"] = activity_count
+
+    col_act_a, col_act_b = st.columns(2)
+
+    with col_act_a:
+        act_dist = activity_count.value_counts().sort_index().reset_index()
+        act_dist.columns = ["Number of Activity Types", "Respondents"]
+        act_dist["label"] = act_dist["Number of Activity Types"].map(
+            lambda x: "0 — Not actively caregiving (in this module)"
+            if x == 0 else str(x)
+        )
+        fig_act = px.bar(
+            act_dist,
+            x="Number of Activity Types",
+            y="Respondents",
+            title="How Many Types of Caregiving Activities Are Respondents Doing?",
+            labels={
+                "Number of Activity Types": "Number of Activity Categories",
+                "Respondents": "Number of Respondents",
+            },
+            color="Number of Activity Types",
+            color_continuous_scale="OrRd",
+        )
+        fig_act.update_layout(coloraxis_showscale=False,
+                               margin=dict(t=55))
+        st.plotly_chart(fig_act, width="stretch")
+
+        # Key stats
+        active = activity_count[activity_count > 0]
+        st.markdown(
+            f"- **{len(active):,}** respondents are actively helping with at least one activity type  \n"
+            f"- On average, active caregivers help with **{active.mean():.1f} types** of activities  \n"
+            f"- **{(activity_count >= 3).sum():,}** are juggling **3 or more** activity types at once"
+        )
+
+    with col_act_b:
+        # Burnout rate by number of activities
+        act_burnout = (
+            analysis_df[["activity_count", "burnout_high"]]
+            .groupby("activity_count")["burnout_high"]
+            .agg(rate="mean", count="count")
+            .reset_index()
+        )
+        act_burnout["pct"] = (act_burnout["rate"] * 100).round(1)
+        fig_act_br = px.bar(
+            act_burnout,
+            x="activity_count",
+            y="pct",
+            title="Does Doing More Activities Raise Burnout Risk?",
+            labels={
+                "activity_count": "Number of Caregiving Activity Types",
+                "pct": "% with High Burnout Risk",
+            },
+            color="pct",
+            color_continuous_scale="RdYlGn_r",
+            range_color=[0, 100],
+            text="pct",
+        )
+        fig_act_br.update_traces(texttemplate="%{text:.1f}%", textposition="outside")
+        fig_act_br.update_layout(
+            coloraxis_showscale=False,
+            yaxis_range=[0, 105],
+            margin=dict(t=55),
+        )
+        st.plotly_chart(fig_act_br, width="stretch")
+
+    st.divider()
+
+    # ── 5. Which activities are most common? ────────────────────────────────
+    st.markdown("### 5. What Types of Help Are Caregivers Providing Most?")
+    st.markdown(
+        "Among respondents who help with at least one activity, the chart shows "
+        "how many are doing each type — and what the burnout rate is for each group."
+    )
+
+    act_summary_rows = []
+    for col, label in avail_act.items():
+        n_yes    = int((analysis_df[col] == 1).sum())
+        n_total  = int(analysis_df[col].notna().sum())
+        br       = analysis_df.loc[analysis_df[col] == 1, "burnout_high"].mean() * 100
+        act_summary_rows.append({
+            "Activity Type":        label,
+            "Caregivers Involved":  n_yes,
+            "% of Respondents":     f"{n_yes / len(analysis_df) * 100:.1f}%",
+            "High Burnout Rate":    f"{br:.1f}%",
+        })
+
+    act_summary_df = pd.DataFrame(act_summary_rows).sort_values(
+        "Caregivers Involved", ascending=False
+    )
+
+    col_act_c, col_act_d = st.columns([1, 2])
+    with col_act_c:
+        st.dataframe(act_summary_df, width="stretch", hide_index=True)
+
+    with col_act_d:
+        fig_act_type = px.bar(
+            act_summary_df.sort_values("Caregivers Involved"),
+            x="Caregivers Involved",
+            y="Activity Type",
+            orientation="h",
+            title="Number of Caregivers Per Activity Type",
+            labels={"Caregivers Involved": "Respondents Providing This Type of Help",
+                    "Activity Type": ""},
+            color="Caregivers Involved",
+            color_continuous_scale="Blues",
+        )
+        fig_act_type.update_layout(coloraxis_showscale=False,
+                                    height=360, margin=dict(l=10, r=20, t=50, b=20))
+        st.plotly_chart(fig_act_type, width="stretch")
+
+    st.divider()
+
+    # ── 6. Financial burden ─────────────────────────────────────────────────
+    st.markdown("### 6. What Is the Financial Burden on Caregivers?")
+    st.markdown(
+        "Caregivers often pay out-of-pocket for their care receiver's needs. "
+        "Expense variables are coded as **ordinal brackets** (1 = Less than $200, "
+        "2 = $200-$499, 3 = $500-$999, 4 = $1,000-$1,999, 5 = $2,000-$4,999, "
+        "6 = $5,000+), **not actual dollar amounts**."
+    )
+
+    EXPENSE_COLS = {
+        "HOME_EXP":  "Home modifications",
+        "HLTH_EXP":  "Health care costs",
+        "HELP_EXP":  "Paid help / services",
+        "TRNS_EXP":  "Transportation",
+        "AID_EXP":   "Assistive devices / aids",
+        "MED_EXP":   "Medications",
+    }
+    _EXPENSE_RANGES = {
+        1: "<$200", 2: "$200-$499", 3: "$500-$999",
+        4: "$1k-$2k", 5: "$2k-$5k", 6: "$5k+",
+    }
+    avail_exp = {k: v for k, v in EXPENSE_COLS.items() if k in analysis_df.columns}
+
+    if avail_exp:
+        exp_df = analysis_df[list(avail_exp.keys())].copy()
+
+        col_exp_a, col_exp_b = st.columns(2)
+        with col_exp_a:
+            # Count of respondents per expense bracket (across all categories combined)
+            all_codes = []
+            for k in avail_exp:
+                vals = exp_df[k].dropna()
+                all_codes.extend(vals.tolist())
+            if all_codes:
+                code_counts = pd.Series(all_codes).value_counts().sort_index()
+                bracket_labels = [_EXPENSE_RANGES.get(int(c), str(c)) for c in code_counts.index]
+                fig_exp = px.bar(
+                    x=bracket_labels, y=code_counts.values,
+                    title="All Expense Responses by Bracket (Across All 6 Categories)",
+                    labels={"x": "Expense Bracket", "y": "Number of Responses"},
+                    color_discrete_sequence=["#e07b54"],
+                )
+                fig_exp.update_layout(margin=dict(t=55))
+                st.plotly_chart(fig_exp, width="stretch")
+
+            n_answered = exp_df.notna().any(axis=1).sum()
+            st.markdown(
+                f"- **{n_answered:,}** respondents answered at least one expense question  \n"
+                f"- The rest had 'Valid skip' (not asked due to survey routing)"
+            )
+
+        with col_exp_b:
+            # Per-category: number of respondents who answered
+            cat_rows = []
+            for k, v in avail_exp.items():
+                n_ans = int(exp_df[k].notna().sum())
+                if n_ans == 0:
+                    continue
+                # % reporting $1,000+ (codes 4, 5, 6)
+                n_high = int((exp_df[k] >= 4).sum())
+                cat_rows.append({"Category": v, "n answered": n_ans,
+                                 "% >= $1,000": round(n_high / n_ans * 100, 1)})
+            cat_df = pd.DataFrame(cat_rows).sort_values("% >= $1,000", ascending=True)
+
+            fig_cat = px.bar(
+                cat_df, x="% >= $1,000", y="Category", orientation="h",
+                title="% of Respondents Spending $1,000+ Per Category",
+                labels={"% >= $1,000": "% Spending $1,000 or More", "Category": ""},
+                color="% >= $1,000", color_continuous_scale="Oranges",
+            )
+            fig_cat.update_layout(coloraxis_showscale=False,
+                                   height=360, margin=dict(l=10, r=20, t=50, b=20))
+            st.plotly_chart(fig_cat, width="stretch")
+
+    st.divider()
+
+    # ── 7. Burnout item breakdown ───────────────────────────────────────────
+    st.markdown("### 7. Which Burnout Indicators Are Most Prevalent?")
+    st.markdown(
+        "The 12 survey items that make up the burnout score each capture a "
+        "different dimension of caregiver strain. This chart shows what fraction "
+        "of respondents reported the highest-strain response for each item "
+        "(among those who answered it)."
+    )
+
+    BURNOUT_LABELS = {
+        "ICS_40":  "Overall caregiving is Very/Somewhat stressful",
+        "FIS_10A": "Caregiving reduced time for other family members",
+        "FIS_10B": "Caregiving caused family conflict or tension",
+        "FIS_10C": "Caregiving required other family members to take on extra duties",
+        "FIS_10D": "Caregiving limited ability to do things as a family",
+        "FIS_10E": "Caregiving caused financial difficulties for the family",
+        "FIS_10F": "Caregiving affected family members' school or work",
+        "FIS_10G": "Caregiving affected the caregiver's own health",
+        "FIS_10H": "Caregiving reduced caregiver's social activities",
+        "CRH_10":  "Relationship with care receiver became more difficult",
+        "CRH_20":  "Caregiver felt resentment or frustration toward care receiver",
+        "CRH_30":  "Caregiver considered stopping or reducing caregiving",
+    }
+
+    # Load raw SAS data to access burnout items (they were excluded from X)
+    _raw_main, _ = pyreadstat.read_sas7bdat(SAS_FILE)
+    _raw_clean = _raw_main.drop(columns=[c for c in _raw_main.columns if c.startswith("WTBS_")])
+
+    item_rows = []
+    for col, label in BURNOUT_LABELS.items():
+        if col not in _raw_clean.columns:
+            continue
+        # Raw codes: Binary 1=Yes(strain), 2=No; ICS_40 1=Very stressful .. 4=Not at all
+        col_vals = _raw_clean[col].replace(RESERVE_CODES, np.nan).dropna()
+        if len(col_vals) == 0:
+            continue
+        if col == "ICS_40":
+            pct_strain = ((col_vals <= 2).sum() / len(col_vals)) * 100
+            note = "Very or Stressful (top 2 of 4)"
+        else:
+            pct_strain = ((col_vals == 1).sum() / len(col_vals)) * 100
+            note = "Yes (strain present)"
+        item_rows.append({
+            "Burnout Indicator": label,
+            "pct": round(pct_strain, 1),
+            "note": note,
+        })
+
+    if item_rows:
+        item_df = pd.DataFrame(item_rows).sort_values("pct", ascending=True)
+        fig_items = px.bar(
+            item_df,
+            x="pct",
+            y="Burnout Indicator",
+            orientation="h",
+            title="Prevalence of Each Burnout Indicator (% of Respondents Who Answered)",
+            labels={"pct": "% Reporting This Strain", "Burnout Indicator": ""},
+            color="pct",
+            color_continuous_scale="RdYlGn_r",
+            range_color=[0, 100],
+            text="pct",
+        )
+        fig_items.update_traces(texttemplate="%{text:.1f}%", textposition="outside")
+        fig_items.update_layout(
+            coloraxis_showscale=False,
+            height=500,
+            margin=dict(l=10, r=60, t=50, b=20),
+        )
+        st.plotly_chart(fig_items, width="stretch")
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# TAB 3 — RISK DRIVERS (MODEL + SHAP)
 # ══════════════════════════════════════════════════════════════════════════════
 with tab_drivers:
-    st.subheader("Model Performance")
+    st.subheader("What Factors Drive Burnout Risk?")
     st.markdown(
-        "An XGBoost classifier predicts high-burnout risk from ~140 survey variables. "
-        "SHAP values then show **how much** and **in which direction** each variable "
-        "drives the burnout prediction for every respondent."
+        "An XGBoost machine-learning model was trained to predict which caregivers "
+        "are at high risk of burnout. **SHAP values** then measure how much each "
+        "survey variable pushed each person's predicted risk up or down — giving "
+        "a transparent, factor-by-factor explanation for every respondent."
     )
 
     model, auc, fpr, tpr, report, X_test, y_test, y_prob = train_model()
     shap_df = get_shap_values()
 
-    # Metrics row
+    # --- Model accuracy banner ---
+    st.markdown("#### Model Accuracy")
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("ROC-AUC",
-              f"{auc:.4f}",
-              help="1.0 = perfect; 0.5 = random. >0.70 is useful for screening.")
-    c2.metric("Precision (High Burnout)",
-              f"{report['High Burnout']['precision']:.3f}",
-              help="Of those flagged high-risk, what fraction truly are?")
-    c3.metric("Recall (High Burnout)",
-              f"{report['High Burnout']['recall']:.3f}",
-              help="Of all truly high-risk people, what fraction did we catch?")
-    c4.metric("F1 (High Burnout)",
-              f"{report['High Burnout']['f1-score']:.3f}")
+    c1.metric(
+        "ROC-AUC Score", f"{auc:.4f}",
+        help="Ranges from 0.5 (random guessing) to 1.0 (perfect). "
+             "Above 0.70 is considered useful for population screening.",
+    )
+    c2.metric(
+        "Precision — High Burnout",
+        f"{report['High Burnout']['precision']:.3f}",
+        help="Of everyone the model flagged as high-risk, this fraction truly were.",
+    )
+    c3.metric(
+        "Recall — High Burnout",
+        f"{report['High Burnout']['recall']:.3f}",
+        help="Of all truly high-risk people, this fraction were correctly identified.",
+    )
+    c4.metric("F1 Score — High Burnout", f"{report['High Burnout']['f1-score']:.3f}")
 
     st.divider()
 
@@ -679,211 +1108,83 @@ with tab_drivers:
     with col_roc:
         fig_roc = go.Figure()
         fig_roc.add_trace(go.Scatter(
-            x=fpr, y=tpr, name=f"Model (AUC={auc:.3f})",
+            x=fpr, y=tpr,
+            name=f"This model  (AUC = {auc:.3f})",
             line=dict(color="steelblue", width=2),
         ))
         fig_roc.add_trace(go.Scatter(
-            x=[0, 1], y=[0, 1], name="Random chance",
+            x=[0, 1], y=[0, 1],
+            name="Random guessing",
             line=dict(dash="dash", color="gray"),
         ))
         fig_roc.update_layout(
-            title="ROC Curve",
-            xaxis_title="False Positive Rate",
-            yaxis_title="True Positive Rate",
-            height=380,
-            legend=dict(x=0.55, y=0.1),
+            title="ROC Curve — How Well the Model Separates Risk Groups",
+            xaxis_title="False Positive Rate\n(High-risk caregivers incorrectly flagged as Low)",
+            yaxis_title="True Positive Rate\n(High-risk caregivers correctly identified)",
+            height=400,
+            legend=dict(x=0.45, y=0.1),
         )
-        st.plotly_chart(fig_roc, use_container_width=True)
+        st.plotly_chart(fig_roc, width="stretch")
 
     with col_shap:
-        # Global SHAP importance bar
+        # Global feature importance (top 20 by mean |SHAP|)
         mean_abs_shap = shap_df.abs().mean().sort_values(ascending=False).head(20)
-        feat_labels = [
-            var_info.get(c, c)[:55] + ("…" if len(var_info.get(c, c)) > 55 else "")
+        readable_names = [
+            var_info.get(c, c)[:40] + ("…" if len(var_info.get(c, c)) > 40 else "")
             for c in mean_abs_shap.index
         ]
-        fig_shap_bar = px.bar(
+        fig_imp = px.bar(
             x=mean_abs_shap.values[::-1],
-            y=feat_labels[::-1],
+            y=readable_names[::-1],
             orientation="h",
-            title="Top 20 Global Risk Drivers (Mean |SHAP Value|)",
-            labels={"x": "Mean |SHAP value|", "y": ""},
+            title="Top 20 Factors That Most Influence Burnout Risk Predictions",
+            labels={"x": "Average influence on burnout prediction (SHAP value)", "y": ""},
             color=mean_abs_shap.values[::-1],
             color_continuous_scale="Blues",
         )
-        fig_shap_bar.update_layout(
-            coloraxis_showscale=False,
-            height=500,
-            margin=dict(l=10, r=20, t=50, b=20),
-        )
-        st.plotly_chart(fig_shap_bar, use_container_width=True)
+        fig_imp.update_layout(coloraxis_showscale=False, height=520,
+                               margin=dict(l=10, r=20, t=50, b=20))
+        st.plotly_chart(fig_imp, width="stretch")
 
+    # --- SHAP beeswarm ---
     st.divider()
-    st.subheader("Feature Impact Direction (SHAP Beeswarm)")
+    st.subheader("How Does Each Factor Push Risk Up or Down?")
     st.markdown(
-        "Each dot represents one respondent.  "
-        "**Red** = high feature value, **blue** = low feature value.  "
-        "X-axis position shows whether the feature **increases** (right) or "
-        "**decreases** (left) burnout risk."
+        "The chart below shows every respondent as a dot.  \n"
+        "- **Position on the horizontal axis**: how much this factor increased "
+        "(right of centre) or decreased (left of centre) that person's predicted "
+        "burnout risk.  \n"
+        "- **Dot colour**: red = respondent had a high value for that factor; "
+        "blue = low value.  \n"
+        "This reveals not just *which* factors matter, but *in which direction* "
+        "they affect risk."
     )
 
     fig_bee = plt.figure(figsize=(11, 7))
     shap.summary_plot(
         shap_df.values, X,
+        feature_names=feat_display_names,   # show plain English, not column codes
         max_display=15,
         show=False,
     )
-    st.pyplot(fig_bee, use_container_width=True)
+    plt.xlabel("Impact on burnout risk prediction\n"
+               "(← lowers risk   |   raises risk →)", fontsize=10)
+    st.pyplot(fig_bee, width="stretch")
     plt.close(fig_bee)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# TAB 3 — CAREGIVER SEGMENTS (CLUSTERS)
-# ══════════════════════════════════════════════════════════════════════════════
-with tab_segments:
-    st.subheader("Caregiver Segments")
-    st.markdown(
-        "Caregivers are grouped by **shared risk-driver patterns** using K-Means "
-        "clustering on SHAP values — not by burnout level alone. Each segment "
-        "represents a group with a distinct combination of factors driving their risk. "
-        "This helps you target the **right intervention** for each group."
-    )
-
-    cluster_labels, best_k, k_list, silhouettes = get_clusters()
-    shap_df_c = get_shap_values()
-    shap_feat_cols = list(X.columns)
-
-    # Silhouette plot
-    with st.expander("Cluster selection — silhouette scores"):
-        fig_sil = px.line(
-            x=k_list, y=silhouettes, markers=True,
-            title="Silhouette Score by Number of Clusters",
-            labels={"x": "k (number of clusters)", "y": "Silhouette Score"},
-        )
-        fig_sil.add_vline(
-            x=best_k, line_dash="dash", line_color="red",
-            annotation_text=f"Selected k={best_k}",
-        )
-        st.plotly_chart(fig_sil, use_container_width=True)
-
-    st.divider()
-
-    # Summary table: one row per cluster
-    summary_rows = []
-    for c_id in range(best_k):
-        pos_idx = np.where(cluster_labels == c_id)[0]
-        n_c  = len(pos_idx)
-        br_c = float(y_clf.iloc[pos_idx].mean()) * 100
-        mean_shap = shap_df_c.iloc[pos_idx][shap_feat_cols].abs().mean()
-        top_feat  = mean_shap.idxmax()
-        top_label = var_info.get(top_feat, top_feat)
-        summary_rows.append({
-            "Segment":          f"Segment {c_id + 1}",
-            "Size":             n_c,
-            "% of Total":       f"{n_c / len(cluster_labels) * 100:.1f}%",
-            "High Burnout Rate": f"{br_c:.1f}%",
-            "Top Risk Driver":  top_label[:70] + ("…" if len(top_label) > 70 else ""),
-        })
-
-    st.dataframe(pd.DataFrame(summary_rows), use_container_width=True, hide_index=True)
-    st.divider()
-
-    # Per-segment detail
-    seg_choice = st.selectbox(
-        "Select a segment to explore in detail",
-        [f"Segment {i + 1}" for i in range(best_k)],
-    )
-    c_sel = int(seg_choice.split()[-1]) - 1
-    pos_idx_sel = np.where(cluster_labels == c_sel)[0]
-
-    col_left, col_right = st.columns([3, 2])
-
-    with col_left:
-        # Signed SHAP mean → direction of effect
-        mean_shap_signed = shap_df_c.iloc[pos_idx_sel][shap_feat_cols].mean()
-        top10 = mean_shap_signed.abs().sort_values(ascending=False).head(10)
-        top10_labels = [
-            var_info.get(f, f)[:50] + ("…" if len(var_info.get(f, f)) > 50 else "")
-            for f in top10.index
-        ]
-        directions = [
-            "▲ Raises Risk" if mean_shap_signed[f] > 0 else "▼ Lowers Risk"
-            for f in top10.index
-        ]
-        bar_colors = [
-            "#d73027" if mean_shap_signed[f] > 0 else "#1a9850"
-            for f in top10.index
-        ]
-
-        fig_seg = go.Figure(go.Bar(
-            x=top10.values[::-1],
-            y=[f"{l} ({d})" for l, d in zip(top10_labels[::-1], directions[::-1])],
-            orientation="h",
-            marker_color=bar_colors[::-1],
-        ))
-        fig_seg.update_layout(
-            title=f"{seg_choice} — Top 10 Risk Drivers",
-            xaxis_title="Mean |SHAP value|",
-            height=420,
-            margin=dict(l=10, r=20, t=50, b=20),
-        )
-        st.plotly_chart(fig_seg, use_container_width=True)
-
-    with col_right:
-        # Burnout rate comparison
-        br_overall = float(y_clf.mean()) * 100
-        br_segment = float(y_clf.iloc[pos_idx_sel].mean()) * 100
-
-        fig_br = go.Figure(go.Bar(
-            x=[br_overall, br_segment],
-            y=["Overall", seg_choice],
-            orientation="h",
-            marker_color=["#7fbfff", "#e07b54"],
-            text=[f"{br_overall:.1f}%", f"{br_segment:.1f}%"],
-            textposition="outside",
-        ))
-        fig_br.update_layout(
-            title="High Burnout Rate vs Overall",
-            xaxis_title="High Burnout Rate (%)",
-            xaxis_range=[0, 105],
-            height=200,
-            margin=dict(l=10, r=40, t=50, b=20),
-        )
-        st.plotly_chart(fig_br, use_container_width=True)
-
-        # Demographic mode snapshot
-        DEMO_COLS = ["SEX", "PRV", "FAMINCG1", "MARSTAT", "VISMIN",
-                     "SENFLAG", "COW_10", "UWS230GR"]
-        demo_avail = [c for c in DEMO_COLS if c in analysis_df.columns]
-        demo_rows = []
-        for col in demo_avail:
-            vals = analysis_df.iloc[pos_idx_sel][col].dropna()
-            if len(vals) == 0:
-                continue
-            mode_code  = vals.mode().iloc[0]
-            mode_label = label_map.get(col, {}).get(int(mode_code), str(mode_code))
-            pct        = (vals == mode_code).mean() * 100
-            demo_rows.append({
-                "Variable":       var_info.get(col, col)[:38],
-                "Most Common":    str(mode_label)[:30],
-                "% in Segment":   f"{pct:.1f}%",
-            })
-        if demo_rows:
-            st.markdown(f"**{seg_choice} — Demographic Snapshot**")
-            st.dataframe(pd.DataFrame(demo_rows), use_container_width=True, hide_index=True)
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# TAB 4 — VARIABLE EXPLORER
+# TAB 3 — VARIABLE EXPLORER
 # ══════════════════════════════════════════════════════════════════════════════
 with tab_explore:
-    st.subheader("Variable Explorer")
+    st.subheader("Explore Any Survey Variable")
     st.markdown(
-        "Select any survey variable to see how its categories relate to high "
-        "burnout rate in the **currently filtered** population."
+        "Choose any survey variable to see how its answer categories relate to "
+        "high burnout risk in the **currently filtered** population. "
+        "The table on the right shows the exact percentages."
     )
 
-    # Only show variables with a reasonable number of categories (≤ 20 unique)
+    # Only offer variables with a manageable number of distinct categories
     explorable = [
         c for c in filtered_df.columns
         if c not in ("burnout_high", "burnout_score", "WGHT_PER",
@@ -891,55 +1192,67 @@ with tab_explore:
         and filtered_df[c].nunique(dropna=True) <= 20
         and filtered_df[c].notna().sum() > 50
     ]
-    var_display = {
-        f"{c}  —  {var_info.get(c, c)[:65]}": c
+    var_options = {
+        f"[{c}]  {var_info.get(c, c)[:50]}": c
         for c in explorable
     }
 
-    sel_label = st.selectbox("Choose a variable", list(var_display.keys()))
-    sel_var   = var_display[sel_label]
+    sel_label = st.selectbox("Choose a survey variable", list(var_options.keys()))
+    sel_var   = var_options[sel_label]
 
     col_chart, col_table = st.columns([3, 2])
     with col_chart:
         st.plotly_chart(
             burnout_rate_chart(
                 filtered_df, sel_var, label_map, var_info,
-                f"High Burnout Rate by {var_info.get(sel_var, sel_var)}",
+                f"High Burnout Rate by: {var_info.get(sel_var, sel_var)}",
             ),
-            use_container_width=True,
+            width="stretch",
         )
 
     with col_table:
         tmp = filtered_df[[sel_var, "burnout_high"]].dropna().copy()
-        tmp["_label"] = decode_col(tmp[sel_var], label_map, sel_var)
+        tmp["Answer"] = decode_col(tmp[sel_var], label_map, sel_var)
         freq = (
-            tmp.dropna(subset=["_label"])
-            .groupby("_label")
-            .agg(Count=(sel_var, "count"), HighBurnout=("burnout_high", "mean"))
+            tmp.dropna(subset=["Answer"])
+            .groupby("Answer")
+            .agg(
+                Respondents=(sel_var, "count"),
+                high_rate=("burnout_high", "mean"),
+            )
             .reset_index()
         )
-        freq["High Burnout %"] = (freq["HighBurnout"] * 100).round(1)
-        freq = freq.rename(columns={"_label": "Category"})[["Category", "Count", "High Burnout %"]]
+        freq["High Burnout %"] = (freq["high_rate"] * 100).round(1)
+        freq = freq[["Answer", "Respondents", "High Burnout %"]]
         freq = freq.sort_values("High Burnout %", ascending=False)
-        st.dataframe(freq, use_container_width=True, hide_index=True)
+        st.dataframe(freq, width="stretch", hide_index=True)
 
-    # SHAP individual-feature contribution
+    # --- SHAP distribution for the selected variable ---
     st.divider()
-    st.subheader("SHAP Value Distribution for Selected Variable")
+    st.subheader(f"How Strongly Does This Factor Influence Burnout Predictions?")
     st.markdown(
-        "How much does this variable shift the burnout prediction for each respondent?"
+        f"The histogram below shows the distribution of SHAP values for "
+        f"**{var_info.get(sel_var, sel_var)}** across all respondents.  \n"
+        f"Values to the **right of zero** increase predicted burnout risk; "
+        f"values to the **left** decrease it."
     )
 
     if sel_var in shap_df.columns:
-        shap_feature = shap_df[sel_var]
-        fig_shap_dist = px.histogram(
-            shap_feature, nbins=40,
-            title=f"SHAP Distribution: {var_info.get(sel_var, sel_var)[:60]}",
-            labels={"value": "SHAP value (+ = raises burnout risk)", "count": "Respondents"},
+        fig_dist = px.histogram(
+            shap_df[sel_var], nbins=40,
+            title=f"Influence Distribution: {var_info.get(sel_var, sel_var)[:65]}",
+            labels={
+                "value": "SHAP value  (positive = raises burnout risk, "
+                          "negative = lowers it)",
+                "count": "Number of Respondents",
+            },
             color_discrete_sequence=["#5b9bd5"],
         )
-        fig_shap_dist.add_vline(x=0, line_dash="dash", line_color="gray",
-                                annotation_text="No effect")
-        st.plotly_chart(fig_shap_dist, use_container_width=True)
+        fig_dist.add_vline(x=0, line_dash="dash", line_color="gray",
+                           annotation_text="No effect on prediction")
+        st.plotly_chart(fig_dist, width="stretch")
     else:
-        st.info(f"{sel_var} is not in the SHAP feature set (composite or weight column).")
+        st.info(
+            f"SHAP values are not available for **{var_info.get(sel_var, sel_var)}** "
+            f"because it is a composite score or weight column, not a direct model input."
+        )
