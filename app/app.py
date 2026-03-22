@@ -131,12 +131,14 @@ def _inject_styles() -> None:
             font-size: 2rem;
             font-weight: 700;
             margin: 0 0 0.35rem 0;
+            color: #f7fbff;
         }
         .hero-copy {
             font-size: 1rem;
-            opacity: 0.94;
+            opacity: 0.96;
             max-width: 68rem;
             margin-bottom: 0;
+            color: rgba(247, 251, 255, 0.92);
         }
         .section-card {
             background: rgba(255, 255, 255, 0.88);
@@ -146,6 +148,11 @@ def _inject_styles() -> None:
             box-shadow: 0 14px 30px rgba(20, 44, 63, 0.08);
             backdrop-filter: blur(6px);
             margin-bottom: 1rem;
+            color: #102331;
+        }
+        .section-card h1, .section-card h2, .section-card h3, .section-card p,
+        .section-card div, .section-card label, .section-card span {
+            color: #102331;
         }
         .stat-chip {
             background: rgba(255,255,255,0.85);
@@ -163,6 +170,39 @@ def _inject_styles() -> None:
         }
         div[data-testid="stMetricLabel"] {
             font-weight: 600;
+        }
+        [data-testid="stMarkdownContainer"] p,
+        [data-testid="stMarkdownContainer"] li,
+        [data-testid="stCaptionContainer"] {
+            color: #17384d;
+        }
+        .section-card [data-testid="stMarkdownContainer"] p,
+        .section-card [data-testid="stMarkdownContainer"] li,
+        .section-card [data-testid="stCaptionContainer"] {
+            color: #17384d;
+        }
+        .hero-panel [data-testid="stMarkdownContainer"] p,
+        .hero-panel p,
+        .hero-panel span,
+        .hero-panel div {
+            color: rgba(247, 251, 255, 0.94);
+        }
+        [data-baseweb="tab-list"] {
+            gap: 0.35rem;
+        }
+        [data-baseweb="tab"] {
+            background: rgba(255,255,255,0.72);
+            border-radius: 999px;
+            padding: 0.35rem 0.9rem;
+            color: #17384d;
+        }
+        [aria-selected="true"][data-baseweb="tab"] {
+            background: #163a56;
+            color: #f7fbff;
+        }
+        .main [data-testid="stHeading"] h2,
+        .main [data-testid="stHeading"] h3 {
+            color: #163247;
         }
         .sidebar-note {
             background: rgba(255,255,255,0.08);
