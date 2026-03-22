@@ -24,14 +24,13 @@ Long caregiving duration, adapted routines, reliable support. Lowest acute burno
 ## Tech Stack
 
 - Python
-- Flask
-- pandas
-- NumPy
-- scikit-learn
+- Flask / Streamlit
+- pandas, NumPy, SciPy
+- scikit-learn, XGBoost
+- SHAP
 - pyreadstat
 - joblib
-- matplotlib
-- seaborn
+- matplotlib, seaborn, Plotly
 - Jupyter notebooks
 - Statistics Canada GSS Cycle 32 PUMF documentation
 
@@ -67,15 +66,33 @@ DataQuest-2026-DAMB/
 
 ## Installation
 
-Install dependencies with:
-
 ```bash
 pip install -r requirements.txt
 ```
 
-## Running The App Locally
+## Running the Analysis
 
-From the `app/` directory, run:
+### Report (text/markdown output)
+
+Generates a full markdown report at `results/analysis_report.md` and prints it to the terminal. This is the easiest way to review the pipeline results or feed them to another LLM.
+
+```bash
+python src/report.py
+```
+
+### Dashboard (interactive Streamlit app)
+
+Launches an interactive browser dashboard with charts, SHAP plots, cluster profiles, and diagnostics.
+
+```bash
+streamlit run src/dashboard.py
+```
+
+> **Note:** Do not run `python src/dashboard.py` directly — Streamlit apps must be launched with the `streamlit run` command.
+
+### Flask App (caregiver form)
+
+From the `app/` directory:
 
 ```bash
 flask run
